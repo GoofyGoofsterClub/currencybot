@@ -11,7 +11,6 @@ with open('currencies.json') as f:
     currencies = json.load(f)
 
 def find_currency(currency):
-    print(currency)
     for c in currencies:
         if c['cc'] == currency or currency in c['aliases']:
             return c
