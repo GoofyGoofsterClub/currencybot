@@ -73,15 +73,16 @@ class MyClient(discord.Client):
                 if not amount.isnumeric() and amount < 0:
                     continue
                 currency = find_currency(word.lower())
-                converted = api.get_exchange_rates(
+                rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
                     start_date=yesterday,
                     end_date=today,
                     targets=[os.getenv("DEFAULT_CURRENCY")]
                 )
-                converted = converted[yesterday][os.getenv("DEFAULT_CURRENCY")] * float(amount)
-                converted = converted.__round__(2)
-                message_to_send.append(f'{amount} {currency["cc"].upper()} is {converted} {os.getenv("DEFAULT_CURRENCY")}')
+                message_to_send.append(f'{amount} {currency["cc"].upper()} is')
+                for rate in rates:
+                    message_to_send.append(f'{amount} {currency["cc"].upper()} is {(rate * float(amount)).__round__(2)} {os.getenv("DEFAULT_CURRENCY")} ')
+     
         
         if len(message_to_send) > 0:
             await message.reply('\n'.join(message_to_send))
