@@ -83,7 +83,6 @@ class MyClient(discord.Client):
                 for rate in rates:
                     message_to_send.append(f'{amount} {currency["cc"].upper()} is {(rate * float(amount)).__round__(2)} {os.getenv("DEFAULT_CURRENCY")} ')
      
-        
         if len(message_to_send) > 0:
             await message.reply('\n'.join(message_to_send))
             
