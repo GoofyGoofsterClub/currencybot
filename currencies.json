@@ -116,7 +116,7 @@
     {"cc":"qar","symbol":"qr","name":"qatari riyal", "aliases": []},
     {"cc":"ron","symbol":"l","name":"romanian leu", "aliases": []},
     {"cc":"rsd","symbol":"din.","name":"serbian dinar", "aliases": []},
-    {"cc":"rub","symbol":"r","name":"russian ruble", "aliases": []},
+    {"cc":"rub","symbol":"₽","name":"russian ruble", "aliases": []},
     {"cc":"sar","symbol":"sr","name":"saudi riyal", "aliases": []},
     {"cc":"sbd","symbol":"si$","name":"solomon islands dollar", "aliases": []},
     {"cc":"scr","symbol":"sr","name":"seychellois rupee", "aliases": []},
