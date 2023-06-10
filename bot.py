@@ -11,13 +11,20 @@ with open('currencies.json') as f:
     currencies = json.load(f)
 
 def find_currency(currency):
+    print(currency)
     for c in currencies:
+        print("FIND_CURRENCY: POINT OF FAILURE 1")
         if c['cc'] == currency or currency in c['aliases']:
+            print("FIND_CURRENCY: POINT OF FAILURE 2")
             return c
         elif currency.startswith(c['symbol']):
+            print("FIND_CURRENCY: POINT OF FAILURE 3")
             currency = currency.replace(c['cc'], '')
+            print("FIND_CURRENCY: POINT OF FAILURE 4")
             if currency.isnumeric():
+                print("FIND_CURRENCY: POINT OF FAILURE 5")
                 return c
+    print("END OF FIND_CURRENCY")
     return None
 
 def does_text_contain_currency(text):
@@ -62,7 +69,7 @@ class MyClient(discord.Client):
             return
         
         for word in message.content.split():
-            word = word.translate(str.maketrans('', '', string.punctuation))
+            word = word.translate(str.maketrans('', '', string.punctuation.replace('$', '')))
             if find_currency(word.lower()):
                 print("FOUND CURRENCY: " + word)
                 yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
