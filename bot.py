@@ -19,7 +19,7 @@ def find_currency(currency):
             return c
         elif currency.startswith(c['symbol']):
             print("FIND_CURRENCY: POINT OF FAILURE 3")
-            currency = currency.replace(c['cc'], '')
+            currency = currency.replace(c['symbol'], '')
             print("FIND_CURRENCY: POINT OF FAILURE 4")
             if currency.isnumeric():
                 print("FIND_CURRENCY: POINT OF FAILURE 5")
