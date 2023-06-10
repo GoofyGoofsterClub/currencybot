@@ -16,7 +16,8 @@ def find_currency(currency):
             return c
         elif currency.startswith(c['symbol']):
             currency = currency.replace(c['cc'], '')
-            return c
+            if currency.isnumeric():
+                return c
     return None
 
 def does_text_contain_currency(text):
