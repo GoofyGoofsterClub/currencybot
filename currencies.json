@@ -121,7 +121,7 @@
     {"cc":"sbd","symbol":"si$","name":"solomon islands dollar", "aliases": []},
     {"cc":"scr","symbol":"sr","name":"seychellois rupee", "aliases": []},
     {"cc":"sdg","symbol":"sdg","name":"sudanese pound", "aliases": []},
-    {"cc":"sek","symbol":"skr","name":"swedish krona", "aliases": ["kr", "stones"]},
+    {"cc":"sek","symbol":"skr","name":"swedish krona", "aliases": ["kr", "stones", "spänn"]},
     {"cc":"sgd","symbol":"s$","name":"singapore dollar", "aliases": []},
     {"cc":"shp","symbol":"\u00a3","name":"saint helena pound", "aliases": []},
     {"cc":"sll","symbol":"le","name":"sierra leonean leone", "aliases": []},
