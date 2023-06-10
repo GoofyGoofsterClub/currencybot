@@ -152,7 +152,7 @@
     {"cc":"xof","symbol":"cfa","name":"west african cfa franc", "aliases": []},
     {"cc":"xpf","symbol":"f","name":"cfp franc", "aliases": []},
     {"cc":"yer","symbol":"yer","name":"yemeni rial", "aliases": []},
-    {"cc":"zar","symbol":"r","name":"south african rand", "aliases": []},
+    {"cc":"zar","symbol":"zar","name":"south african rand", "aliases": []},
     {"cc":"zmk","symbol":"zk","name":"zambian kwacha", "aliases": []},
     {"cc":"zwr","symbol":"z$","name":"zimbabwean dollar", "aliases": []}
   ]
