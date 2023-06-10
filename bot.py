@@ -69,10 +69,14 @@ class MyClient(discord.Client):
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
                 amount = message.content.split()[message.content.split().index(word) - 1]
                 amount = ''.join([i for i in amount if i.isnumeric()])
-                amount = float(amount)
-                if not amount.isnumeric() and amount < 0:
-                    continue
+
+
                 currency = find_currency(word.lower())
+                if word.startswith(currency['symbol']):
+                    amount = word.replace(currency['symbol'], '')
+                    if amount.isnumeric():
+                        amount = float(amount)
+
                 converted = api.get_exchange_rates(
                     base_currency=currency['cc'],
                     start_date=yesterday,
