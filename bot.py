@@ -1,11 +1,9 @@
 import discord
 import os
 import json
-#from dotenv import load_dotenv
 import string
 from easy_exchange_rates import API
 from datetime import datetime, timedelta
-#load_dotenv()
 
 currencyapi = api = API()
 
