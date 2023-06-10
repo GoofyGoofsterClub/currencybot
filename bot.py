@@ -68,7 +68,8 @@ class MyClient(discord.Client):
                 yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
                 amount = message.content.split()[message.content.split().index(word) - 1]
-                amount = int(''.join([i for i in amount if i.isnumeric()]))
+                amount = ''.join([i for i in amount if i.isnumeric()])
+                amount = float(amount)
                 if not amount.isnumeric() and amount < 0:
                     continue
                 currency = find_currency(word.lower())
