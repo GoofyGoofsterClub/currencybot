@@ -14,6 +14,9 @@ def find_currency(currency):
     for c in currencies:
         if c['cc'] == currency or currency in c['aliases']:
             return c
+        elif currency.startswith(c['cc']):
+            currency = currency.replace(c['cc'], '')
+            return c
     return None
 
 def does_text_contain_currency(text):

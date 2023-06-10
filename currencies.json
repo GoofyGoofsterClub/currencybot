@@ -139,7 +139,7 @@
     {"cc":"tzs","symbol":"tzs","name":"tanzanian shilling", "aliases": []},
     {"cc":"uah","symbol":"uah","name":"ukrainian hryvnia", "aliases": []},
     {"cc":"ugx","symbol":"ush","name":"ugandan shilling", "aliases": []},
-    {"cc":"usd","symbol":"us$","name":"united states dollar", "aliases": ["dollars", "dollands"]},
+    {"cc":"usd","symbol":"$","name":"united states dollar", "aliases": ["dollars", "dollands"]},
     {"cc":"uyu","symbol":"$u","name":"uruguayan peso", "aliases": []},
     {"cc":"uzs","symbol":"uzs","name":"uzbekistani som", "aliases": []},
     {"cc":"veb","symbol":"bs","name":"venezuelan bolivar", "aliases": []},
