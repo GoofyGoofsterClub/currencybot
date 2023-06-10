@@ -14,7 +14,7 @@ def find_currency(currency):
     for c in currencies:
         if c['cc'] == currency or currency in c['aliases']:
             return c
-        elif currency.startswith(c['symbol']):
+        elif currency.startswith(c['symbol']) and currency.replace(c['symbol'], '').isnumeric():
             currency = currency.replace(c['symbol'], '')
             if currency.isnumeric():
                 return c
