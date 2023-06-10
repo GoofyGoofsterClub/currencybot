@@ -12,7 +12,7 @@ with open('currencies.json') as f:
 
 def find_currency(currency):
     for c in currencies:
-        if c['cc'] == currency:
+        if c['cc'] == currency or currency in c['aliases']:
             return c
     return None
 
