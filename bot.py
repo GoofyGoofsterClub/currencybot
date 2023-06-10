@@ -59,7 +59,7 @@ class MyClient(discord.Client):
         
         for word in message.content.split():
             word = word.translate(str.maketrans('', '', string.punctuation))
-            if find_currency(word):
+            if find_currency(word.lower()):
                 
                 yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
