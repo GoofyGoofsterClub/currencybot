@@ -1,0 +1,4 @@
+discord.py
+panda
+dotenv
+easy_exchange_rates
