@@ -1,3 +1,4 @@
+requests
 discord.py
 pandas
 easy_exchange_rates
