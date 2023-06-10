@@ -67,7 +67,7 @@ class MyClient(discord.Client):
                 yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
                 amount = message.content.split()[message.content.split().index(word) - 1]
-                currency = find_currency(word)
+                currency = find_currency(word.lower())
                 converted = api.get_exchange_rates(
                     base_currency=currency['cc'],
                     start_date=yesterday,
@@ -76,7 +76,7 @@ class MyClient(discord.Client):
                 )
                 converted = converted[yesterday][os.getenv("DEFAULT_CURRENCY")] * float(amount)
                 converted = converted.__round__(2)
-                message_to_send.append(f'{amount} {currency["cc"]} is {converted} {os.getenv("DEFAULT_CURRENCY")}')
+                message_to_send.append(f'{amount} {currency["cc"].upper()} is {converted} {os.getenv("DEFAULT_CURRENCY")}')
         
         if len(message_to_send) > 0:
             await message.reply('\n'.join(message_to_send))
