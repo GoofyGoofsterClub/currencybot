@@ -105,7 +105,7 @@ class MyClient(discord.Client):
                 try:
                     envrate.pop(envrate.index(currency['cc'].upper()))
                 except:
-                    ()
+                    pass
 
                 rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
