@@ -87,6 +87,7 @@ class MyClient(discord.Client):
                 elif re.search("\d+[\.\,]?\d*k$", word):
                     #current thousands match
                     amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+                    amount = float(amount)*1000
                 elif re.search("\d+[\.\,]?\d*", word):
                     #current word match
                     amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
