@@ -107,7 +107,7 @@ class MyClient(discord.Client):
                 )
                 messageout = (f'{amount} {currency["cc"].upper()} is ')   
                 for i, rate in enumerate(rates[today]):
-                    result = rates[today][rate] * amount.__round__(2)
+                    result = (rates[today][rate] * amount).__round__(2)
 
                     if result > 9999:
                         result = result/1000
