@@ -77,15 +77,15 @@ class MyClient(discord.Client):
                     if amount.isnumeric():
                         amount = float(amount)
 
-                converted = api.get_exchange_rates(
+                rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
                     start_date=yesterday,
                     end_date=today,
-                    targets=[os.getenv("DEFAULT_CURRENCY")]
+                    targets=[os.getenv("DEFAULT_CURRENCY").split(',')]
                 )
-                converted = converted[yesterday][os.getenv("DEFAULT_CURRENCY")] * float(amount)
-                converted = converted.__round__(2)
-                message_to_send.append(f'{amount} {currency["cc"].upper()} is {converted} {os.getenv("DEFAULT_CURRENCY")}')
+                message_to_send.append(f'{amount} {currency["cc"].upper()} is ')      
+                for rate in rates[yesterday]:
+                    message_to_send.append(f'{(rates[yesterday][rate] * float(amount)).__round__(2)} {rate} ')
         
         if len(message_to_send) > 0:
             await message.reply('\n'.join(message_to_send))
