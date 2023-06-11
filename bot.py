@@ -66,18 +66,19 @@ class MyClient(discord.Client):
         message_to_send = []
         if message.author == self.user:
             return
-        
-        for word in message.content.split():
+        msg_sep = message.content.split()
+        for word in msg_sep:
             word = word.translate(str.maketrans('', '', string.punctuation.replace('$', '')))
             currency = find_currency(word.lower())
             if currency:
                 #yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
-                amount = message.content.split()[message.content.split().index(word) - 1]
-                amount = ''.join([i for i in amount if i.isnumeric() or i == ',' or i == '.']).replace(',', '.')
+                print("FOUND CURRENCY: " + word + " " + currency["cc"])
+                amount = msg_sep[msg_sep.index(word) - 1]
+                amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
                 if not amount:
-                    amount = message.content.split()[message.content.split().index(word)]
-                    amount = ''.join([i for i in amount if i.isnumeric() or i == ',' or i == '.']).replace(',', '.')
+                    amount = word
+                    amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
 
                 try:
                     amount= float(amount)
@@ -85,10 +86,11 @@ class MyClient(discord.Client):
                     print(f'{amount} is not a float')
                     break
 
-                if word.startswith(currency['symbol']):
-                    amount = word.replace(currency['symbol'], '')
-                    if amount.isnumeric():
-                        amount = float(amount)
+                #Unused
+                #if word.startswith(currency['symbol']):
+                #    amount = word.replace(currency['symbol'], '')
+                #    if amount.isnumeric():
+                #        amount = float(amount)
 
                 envrate = os.getenv("DEFAULT_CURRENCY").split(',')
                 try:
