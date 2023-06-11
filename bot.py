@@ -76,7 +76,8 @@ class MyClient(discord.Client):
                     amount = word.replace(currency['symbol'], '')
                     if amount.isnumeric():
                         amount = float(amount)
-
+                print(os.getenv("DEFAULT_CURRENCY"))
+                print(os.getenv("DEFAULT_CURRENCY").split(','))
                 rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
                     start_date=yesterday,
