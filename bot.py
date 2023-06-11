@@ -105,10 +105,11 @@ class MyClient(discord.Client):
                     print(f' (error: {amount} is not a float)')
                     break
 
+                TEMPENVRATE = ENVRATE.copy()
                 try:
-                    TEMPENVRATE = ENVRATE.copy().remove(currency['cc'].upper())
+                    TEMPENVRATE.pop(ENVRATE.index(currency['cc'].upper()))
                 except:
-                    continue
+                    pass
 
                 rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
