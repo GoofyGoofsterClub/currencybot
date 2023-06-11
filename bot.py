@@ -71,7 +71,7 @@ class MyClient(discord.Client):
             word = word.translate(str.maketrans('', '', string.punctuation.replace('$', '')))
             currency = find_currency(word.lower())
             if currency:
-
+                print("FOUND CURRENCY: " + word)
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
 
                 if re.search("\d+[\.\,]?\d*k$", msg_sep[msg_sep.index(word) - 1]):
