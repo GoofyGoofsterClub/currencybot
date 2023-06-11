@@ -74,16 +74,16 @@ class MyClient(discord.Client):
 
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
 
-                if re.search("^\d+[\.\,]?\d*k$", msg_sep[msg_sep.index(word) - 1]):
+                if re.search("\d+[\.\,]?\d*k$", msg_sep[msg_sep.index(word) - 1]):
                     #thousands match
                     amount = msg_sep[msg_sep.index(word) - 1]
                     amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
                     amount = float(amount)*1000
-                elif re.search("^\d+[\.\,]?\d*", msg_sep[msg_sep.index(word) - 1]):
+                elif re.search("\d+[\.\,]?\d*", msg_sep[msg_sep.index(word) - 1]):
                     #previous word match
                     amount = msg_sep[msg_sep.index(word) - 1]
                     amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
-                elif re.search("^\d+[\.\,]?\d*", word):
+                elif re.search("\d+[\.\,]?\d*", word):
                     #current word match
                     amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
 
