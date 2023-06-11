@@ -41,7 +41,10 @@ class MyClient(discord.Client):
         if message.author == self.user:
             return
         
+        print(f"{message.author}: {message.content}", end='')
+
         if message.content.startswith(os.getenv('BOT_PREFIX')):
+            print(' (command)', end='')
             command = message.content.split()[0][1:]
             if command == "convert":
                 args = message.content.split()[1:]
@@ -64,14 +67,14 @@ class MyClient(discord.Client):
                     await message.reply('Invalid arguments')
             return
         message_to_send = []
-        if message.author == self.user:
-            return
+
         msg_sep = message.content.split()
+        currency_found = []
         for word in msg_sep:
             word = word.translate(str.maketrans('', '', string.punctuation.replace('$', '')))
             currency = find_currency(word.lower())
             if currency:
-                print("FOUND CURRENCY: " + word)
+                currency_found.append(currency)
                 yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
 
@@ -95,7 +98,7 @@ class MyClient(discord.Client):
                 try:
                     amount= float(amount)
                 except:
-                    print(f'{amount} is not a float')
+                    print(f' (error: {amount} is not a float)')
                     break
 
                 envrate = os.getenv("DEFAULT_CURRENCY").split(',')
@@ -123,9 +126,11 @@ class MyClient(discord.Client):
                         messageout += "or "
 
                 message_to_send.append(messageout)
-        
+        print(f' ({len(currency_found)} currencies found: {", ".join([c["cc"] for c in currency_found])})', end='')
         if len(message_to_send) > 0:
             await message.reply('\n'.join(message_to_send))
+        
+        print('')
             
 intents = discord.Intents.default()
 intents.message_content = True
