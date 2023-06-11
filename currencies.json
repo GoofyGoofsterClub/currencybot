@@ -76,7 +76,7 @@
     {"cc":"krw","symbol":"w","name":"south korean won", "aliases": []},
     {"cc":"kwd","symbol":"kwd","name":"kuwaiti dinar", "aliases": []},
     {"cc":"kyd","symbol":"ky$","name":"cayman islands dollar", "aliases": []},
-    {"cc":"kzt","symbol":"t","name":"kazakhstani tenge", "aliases": []},
+    {"cc":"kzt","symbol":"ten","name":"kazakhstani tenge", "aliases": ["tenge"]},
     {"cc":"lak","symbol":"kn","name":"lao kip", "aliases": []},
     {"cc":"lbp","symbol":"\u00a3","name":"lebanese lira", "aliases": []},
     {"cc":"lkr","symbol":"rs","name":"sri lankan rupee", "aliases": []},
