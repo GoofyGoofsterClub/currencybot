@@ -22,7 +22,7 @@ def find_currency(currency):
                 return c
         elif currency.endswith(c['cc']):
             return c
-        elif re.search(alias_re, currency):
+        elif c['aliases'] and re.search(alias_re, currency):
             return c
     return None
 
