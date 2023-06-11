@@ -18,7 +18,7 @@ def find_currency(currency):
             return c
         elif currency.startswith(c['symbol']):
             currency = currency.replace(c['symbol'], '')
-            if currency.isnumeric():
+            if currency.replace('k', '').isnumeric():
                 return c
         elif currency.endswith(c['cc']):
             return c
