@@ -1,0 +1,10 @@
+version: '3.4'
+services:
+  currency-bot:
+    image: nekopavel/discord-currency-bot:latest
+    container_name: discord-currency
+    restart: always
+    environment:
+    - DISORD_TOKEN=yourdiscordtokenhere
+    - DEFAULT_CURRENCY=SEK,RUB,JPY
+    - BOT_PREFIX=$
