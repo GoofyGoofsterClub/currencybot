@@ -2,6 +2,7 @@ import discord
 import os
 import json
 import string
+import re
 from easy_exchange_rates import API
 from datetime import datetime, timedelta
 
@@ -12,13 +13,16 @@ with open('currencies.json') as f:
 
 def find_currency(currency):
     for c in currencies:
+        alias_re = "^\d+[\.\,]?\d*" + '|'.join(c["aliases"]) + "$"
         if c['cc'] == currency or currency in c['aliases']:
             return c
-        elif currency.startswith(c['symbol']) and currency.replace(c['symbol'], '').isnumeric():
+        elif currency.startswith(c['symbol']):
             currency = currency.replace(c['symbol'], '')
             if currency.isnumeric():
                 return c
         elif currency.endswith(c['cc']):
+            return c
+        elif re.search(alias_re, currency):
             return c
     return None
 
