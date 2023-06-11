@@ -83,9 +83,11 @@ class MyClient(discord.Client):
                     end_date=today,
                     targets=os.getenv("DEFAULT_CURRENCY").split(',')
                 )
-                message_to_send.append(f'{amount} {currency["cc"].upper()} is ')      
+                messageout = (f'{amount} {currency["cc"].upper()} is ')      
                 for rate in rates[yesterday]:
-                    message_to_send.append(f'{(rates[yesterday][rate] * float(amount)).__round__(2)} {rate} ')
+                    messageout += (f'{(rates[yesterday][rate] * float(amount)).__round__(2)} {rate} ')
+                    #print(rate, rates[yesterday][rate])
+                message_to_send.append(messageout)
         
         if len(message_to_send) > 0:
             await message.reply('\n'.join(message_to_send))
