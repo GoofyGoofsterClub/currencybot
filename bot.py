@@ -72,8 +72,14 @@ class MyClient(discord.Client):
                 amount = message.content.split()[message.content.split().index(word) - 1]
                 amount = ''.join([i for i in amount if i.isnumeric() or i == ',' or i == '.']).replace(',', '.')
                 if not amount:
-                    amount = message.content.split()[message.content.split().index(word) - 1]
+                    amount = message.content.split()[message.content.split().index(word)]
                     amount = ''.join([i for i in amount if i.isnumeric() or i == ',' or i == '.']).replace(',', '.')
+
+                try:
+                    amount= float(amount)
+                except:
+                    print(f'{amount} is not a float')
+                    break
 
                 if word.startswith(currency['symbol']):
                     amount = word.replace(currency['symbol'], '')
