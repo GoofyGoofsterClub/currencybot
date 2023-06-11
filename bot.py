@@ -105,6 +105,7 @@ class MyClient(discord.Client):
                     end_date=today,
                     targets=envrate
                 )
+                messageout = (f'{amount} {currency["cc"].upper()} is ')   
                 for i, rate in enumerate(rates[today]):
                     result = rates[today][rate] * amount.__round__(2)
 
