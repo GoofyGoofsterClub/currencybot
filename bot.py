@@ -84,6 +84,9 @@ class MyClient(discord.Client):
                     #previous word match
                     amount = msg_sep[msg_sep.index(word) - 1]
                     amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+                elif re.search("\d+[\.\,]?\d*k$", word):
+                    #current thousands match
+                    amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
                 elif re.search("\d+[\.\,]?\d*", word):
                     #current word match
                     amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
