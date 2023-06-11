@@ -77,13 +77,19 @@ class MyClient(discord.Client):
                     if amount.isnumeric():
                         amount = float(amount)
 
+                envrate = os.getenv("DEFAULT_CURRENCY").split(',')
+                try:
+                    envrate.pop(envrate.index(currency['cc'].upper()))
+                except:
+                    ()#do nothing
+
                 rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
                     start_date=yesterday,
                     end_date=today,
-                    targets=os.getenv("DEFAULT_CURRENCY").split(',')
+                    targets=envrate
                 )
-                
+
                 messageout = (f'{amount} {currency["cc"].upper()} is ')
 
                 for rate in rates[yesterday]:
