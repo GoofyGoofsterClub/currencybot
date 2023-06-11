@@ -18,6 +18,8 @@ def find_currency(currency):
             currency = currency.replace(c['symbol'], '')
             if currency.isnumeric():
                 return c
+        elif currency.endswith(c['cc']):
+            return c
     return None
 
 def does_text_contain_currency(text):
@@ -63,14 +65,14 @@ class MyClient(discord.Client):
         
         for word in message.content.split():
             word = word.translate(str.maketrans('', '', string.punctuation.replace('$', '')))
-            if find_currency(word.lower()):
-                yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
+            currency = find_currency(word.lower())
+            if currency:
+                #yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
                 amount = message.content.split()[message.content.split().index(word) - 1]
                 amount = ''.join([i for i in amount if i.isnumeric() or i == ',' or i == '.']).replace(',', '.')
 
 
-                currency = find_currency(word.lower())
                 if word.startswith(currency['symbol']):
                     amount = word.replace(currency['symbol'], '')
                     if amount.isnumeric():
@@ -84,16 +86,16 @@ class MyClient(discord.Client):
 
                 rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
-                    start_date=yesterday,
+                    start_date=today,
                     end_date=today,
                     targets=envrate
                 )
 
                 messageout = (f'{amount} {currency["cc"].upper()} is ')
 
-                for i, rate in enumerate(rates[yesterday]):
-                    messageout += (f'{(rates[yesterday][rate] * float(amount)).__round__(2)} {rate} ')
-                    if i != len(rates[yesterday]) - 1:
+                for i, rate in enumerate(rates[today]):
+                    messageout += (f'{(rates[today][rate] * float(amount)).__round__(2)} {rate} ')
+                    if i != len(rates[today]) - 1:
                         messageout += "or "
                     
                 message_to_send.append(messageout)
