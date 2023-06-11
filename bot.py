@@ -81,7 +81,7 @@ class MyClient(discord.Client):
                     base_currency=currency['cc'],
                     start_date=yesterday,
                     end_date=today,
-                    targets=[os.getenv("DEFAULT_CURRENCY").split(',')]
+                    targets=os.getenv("DEFAULT_CURRENCY").split(',')
                 )
                 message_to_send.append(f'{amount} {currency["cc"].upper()} is ')      
                 for rate in rates[yesterday]:
