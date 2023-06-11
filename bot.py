@@ -72,6 +72,7 @@ class MyClient(discord.Client):
             currency = find_currency(word.lower())
             if currency:
                 print("FOUND CURRENCY: " + word)
+                yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
 
                 if re.search("\d+[\.\,]?\d*k$", msg_sep[msg_sep.index(word) - 1]):
@@ -101,20 +102,20 @@ class MyClient(discord.Client):
 
                 rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
-                    start_date=today,
+                    start_date=yesterday,
                     end_date=today,
                     targets=envrate
                 )
                 messageout = (f'{amount} {currency["cc"].upper()} is ')   
-                for i, rate in enumerate(rates[today]):
-                    result = (rates[today][rate] * amount).__round__(2)
+                for i, rate in enumerate(rates[yesterday]):
+                    result = (rates[yesterday][rate] * amount).__round__(2)
 
                     if result > 9999:
                         result = result/1000
                         messageout += (f'{result.__round__(2)}k {rate} ')
                     else:
                         messageout += (f'{result} {rate} ')
-                    if i != len(rates[today]) - 1:
+                    if i != len(rates[yesterday]) - 1:
                         messageout += "or "
 
                 message_to_send.append(messageout)
