@@ -96,7 +96,7 @@ class MyClient(discord.Client):
                     amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
 
                 try:
-                    amount= float(amount)
+                    amount = float(amount)
                 except:
                     print(f' (error: {amount} is not a float)')
                     break
