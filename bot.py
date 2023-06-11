@@ -94,7 +94,7 @@ class MyClient(discord.Client):
 
                 for i, rate in enumerate(rates[yesterday]):
                     messageout += (f'{(rates[yesterday][rate] * float(amount)).__round__(2)} {rate} ')
-                    if i != len(rates):
+                    if i != len(rates[yesterday] - 1):
                         messageout += "or "
                     
                 message_to_send.append(messageout)
