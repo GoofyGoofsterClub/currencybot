@@ -71,7 +71,9 @@ class MyClient(discord.Client):
                 today = datetime.strftime(datetime.now(), '%Y-%m-%d')
                 amount = message.content.split()[message.content.split().index(word) - 1]
                 amount = ''.join([i for i in amount if i.isnumeric() or i == ',' or i == '.']).replace(',', '.')
-
+                if not amount:
+                    amount = message.split()[message.split().index(word)]
+                    amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
 
                 if word.startswith(currency['symbol']):
                     amount = word.replace(currency['symbol'], '')
