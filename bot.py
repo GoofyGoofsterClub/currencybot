@@ -77,15 +77,16 @@ class MyClient(discord.Client):
                 amount = msg_sep[msg_sep.index(word) - 1]
                 amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
                 if not amount:
-                    amount = word
-                    amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+                    amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+
+                print(amount + "amount")
 
                 try:
                     amount= float(amount)
                 except:
                     print(f'{amount} is not a float')
                     break
-
+                print("passed conversion")
                 #Unused
                 #if word.startswith(currency['symbol']):
                 #    amount = word.replace(currency['symbol'], '')
@@ -104,7 +105,7 @@ class MyClient(discord.Client):
                     end_date=today,
                     targets=envrate
                 )
-
+                print(rates)
                 messageout = (f'{amount} {currency["cc"].upper()} is ')
 
                 for i, rate in enumerate(rates[today]):
@@ -112,6 +113,7 @@ class MyClient(discord.Client):
                     if i != len(rates[today]) - 1:
                         messageout += "or "
                     
+                print(messageout)
                 message_to_send.append(messageout)
         
         if len(message_to_send) > 0:
