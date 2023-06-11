@@ -8,6 +8,10 @@ from datetime import datetime, timedelta
 
 currencyapi = api = API()
 
+ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
+ENVTOKEN = os.getenv('DISORD_TOKEN')
+ENVPREFIX = os.getenv('BOT_PREFIX')
+
 with open('currencies.json') as f:
     currencies = json.load(f)
 
@@ -43,7 +47,7 @@ class MyClient(discord.Client):
         
         print(f"{message.author}: {message.content}", end='')
 
-        if message.content.startswith(os.getenv('BOT_PREFIX')):
+        if message.content.startswith(ENVPREFIX):
             print(' (command)', end='')
             command = message.content.split()[0][1:]
             if command == "convert":
@@ -101,17 +105,16 @@ class MyClient(discord.Client):
                     print(f' (error: {amount} is not a float)')
                     break
 
-                envrate = os.getenv("DEFAULT_CURRENCY").split(',')
                 try:
-                    envrate.pop(envrate.index(currency['cc'].upper()))
+                    TEMPENVRATE = ENVRATE.copy().remove(currency['cc'].upper())
                 except:
-                    pass
+                    continue
 
                 rates = api.get_exchange_rates(
                     base_currency=currency['cc'],
                     start_date=yesterday,
                     end_date=today,
-                    targets=envrate
+                    targets=TEMPENVRATE
                 )
                 messageout = (f'{amount} {currency["cc"].upper()} is ')   
                 for i, rate in enumerate(rates[yesterday]):
@@ -128,4 +131,4 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 client = MyClient(intents=intents)
-client.run(os.getenv('DISORD_TOKEN'))
+client.run(ENVTOKEN)
