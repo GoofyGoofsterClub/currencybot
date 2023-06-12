@@ -45,6 +45,8 @@ class MyClient(discord.Client):
         if message.author == self.user:
             return
         
+        message.content = re.sub(r'\<\:?\@?\w+(\:\d+)?\>', '', message.content)
+
         print(f"{message.author}: {message.content}", end='')
 
         if message.content.startswith(ENVPREFIX):
