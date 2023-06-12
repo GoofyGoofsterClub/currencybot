@@ -28,7 +28,7 @@
     {"cc":"cdf","symbol":"f","name":"congolese franc", "aliases": []},
     {"cc":"chf","symbol":"fr.","name":"swiss franc", "aliases": []},
     {"cc":"clp","symbol":"cl$","name":"chilean peso", "aliases": []},
-    {"cc":"cny","symbol":"\u00a5","name":"chinese/yuan renminbi", "aliases": []},
+    {"cc":"cny","symbol":"\u00a5","name":"chinese/yuan renminbi", "aliases": ["yuan"]},
     {"cc":"cop","symbol":"col$","name":"colombian peso", "aliases": []},
     {"cc":"crc","symbol":"\u20a1","name":"costa rican colon", "aliases": []},
     {"cc":"cuc","symbol":"\u20ac","name":"cuban peso", "aliases": []},
