@@ -121,9 +121,16 @@ class MyClient(discord.Client):
                 )
                 messageout = (f'{amount} {currency["cc"].upper()} is ')   
                 for i, rate in enumerate(rates[yesterday]):
-                    messageout += (f'{(rates[yesterday][rate] * amount).__round__(2)} {rate} or ') if i != len(rates[yesterday]) - 1 else (f'{(rates[yesterday][rate] * amount).__round__(2)} {rate}')
-
+                    result = (rates[yesterday][rate] * amount).__round__(2)
+                    if result > 9999:
+                        result = result/1000
+                        messageout += (f'{result.__round__(2)}k {rate} ')
+                    else:
+                        messageout += (f'{result} {rate} ')
+                    if i != len(rates[yesterday]) - 1:
+                        messageout += "or "
                 message_to_send.append(messageout)
+                
         print(f' ({len(currency_found)} currencies found: {", ".join([c["cc"] for c in currency_found])})', end='')
         if len(message_to_send) > 0:
             await message.reply('\n'.join(message_to_send))
