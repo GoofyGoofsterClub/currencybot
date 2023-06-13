@@ -122,7 +122,7 @@ class MyClient(discord.Client):
         data = [{'amount': 1200.0, 'currency': 'JPY', 'rates': {'RUB': 720.56, 'SEK': 93.02}}]
 
         message_to_send = f"### Conversion rates for this message\n\n" + \
-            '\n'.join([f"* {data['amount']} {data['currency']} is ~({' or '.join([f'__{value}__ {key}' for key, value in data['rates'].items()])})" for data in currency_data])
+            '\n'.join([f"* {data['amount']} {data['currency']} is ~{' or '.join([f'__{value} {key}__' for key, value in data['rates'].items()])}" for data in currency_data])
         
         await message.reply(message_to_send)
 
