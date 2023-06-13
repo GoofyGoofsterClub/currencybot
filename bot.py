@@ -19,14 +19,12 @@ def find_currency(currency):
     if not currency.strip():
         return None
     
+    currency = currency.lower()
+    
     for c in currencies:
-        if c['cc'] == currency or currency in c['aliases']:
+        if c['cc'] == currency:
             return c
-        elif currency.startswith(c['symbol']):
-            currency = currency.replace(c['symbol'], '')
-            if currency.replace('k', '').isnumeric():
-                return c
-        elif currency.endswith(c['cc']):
+        if any([re.match(alias, currency) for alias in c['aliases']]):
             return c
     return None
 
