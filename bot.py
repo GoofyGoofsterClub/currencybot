@@ -121,7 +121,7 @@ class MyClient(discord.Client):
             return
 
         message_to_send = f"### <a:DinkDonk:889016538684850249> {len(currency_data)} money mentions detected\n\n" + \
-            '\n'.join([f"* {'**' + amount + '**'} {data['currency']} is {' or '.join([f'~__{value:,} {key}__' for key, value in data['rates'].items()])}" for data in currency_data])
+            '\n'.join([f"* {'**' + data['amount'] + '**'} {data['currency']} is {' or '.join([f'~__{value:,} {key}__' for key, value in data['rates'].items()])}" for data in currency_data])
         
         await message.reply(message_to_send)
 
