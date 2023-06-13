@@ -119,7 +119,7 @@ class MyClient(discord.Client):
             return
 
         message_to_send = f"### <a:DinkDonk:956632861899886702> {len(currency_data)} money mention{'s' if len(currency_data) > 1 else ''} detected\n\n" + \
-            '\n'.join([f"* {'**' + data['amount'] + '**'} {data['currency']} is {' or '.join([f'*{value:,} {key}*' for key, value in data['rates'].items()])}" for data in currency_data])
+            '\n'.join([f"* **{data['amount']} {data['currency']}** is {' or '.join([f'*{value:,} {key}*' for key, value in data['rates'].items()])}" for data in currency_data])
         
         await message.reply(message_to_send)
 
