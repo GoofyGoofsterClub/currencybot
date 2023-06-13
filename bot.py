@@ -19,24 +19,14 @@ def find_currency(currency):
     if not currency.strip():
         return None
     
-    print(f"'{currency}'")
-
     for c in currencies:
-        alias_re = "^\d+[\.\,]?\d*" + '|'.join(c["aliases"])
         if c['cc'] == currency or currency in c['aliases']:
-            print(f"Found currency: {c['cc']} - Trigger 1")
             return c
         elif currency.startswith(c['symbol']):
-            print(f"Found currency: {c['cc']} - Trigger 2")
             currency = currency.replace(c['symbol'], '')
             if currency.replace('k', '').isnumeric():
-                print(f"Found currency: {c['cc']} - Trigger 3")
                 return c
         elif currency.endswith(c['cc']):
-            print(f"Found currency: {c['cc']} - Trigger 4")
-            return c
-        elif c['aliases'] and re.search(alias_re, currency):
-            print(f"Found currency: {c['cc']} - Trigger 5")
             return c
     return None
 
