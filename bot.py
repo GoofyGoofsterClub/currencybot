@@ -110,7 +110,7 @@ class MyClient(discord.Client):
                     matched_rates[rate] = (rates[yesterday][rate] * amount).__round__(2)
 
             currency_data.append({
-                "amount": amount,
+                "amount": f'{amount:,}',
                 "currency": currency,
                 "rates": matched_rates
             })
@@ -121,7 +121,7 @@ class MyClient(discord.Client):
             return
 
         message_to_send = f"### Conversion rates for this message\n\n" + \
-            '\n'.join([f"* {'**'+str(data['amount'])+'**'} {data['currency']} is {' or '.join([f'~__{value} {key}__' for key, value in data['rates'].items()])}" for data in currency_data])
+            '\n'.join([f"* {'**' + amount + '**'} {data['currency']} is {' or '.join([f'~__{value:,} {key}__' for key, value in data['rates'].items()])}" for data in currency_data])
         
         await message.reply(message_to_send)
 
