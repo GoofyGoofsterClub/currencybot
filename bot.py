@@ -88,7 +88,7 @@ class MyClient(discord.Client):
             currency = find_currency(match.group(3))
             if not currency:
                 currency = find_currency(match.group(2) + match.group(3))
-                if not currency:
+                if currency == None:
                     continue
                 else:
                     amount_k = 0
