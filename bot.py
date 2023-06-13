@@ -74,10 +74,73 @@ class MyClient(discord.Client):
                     await message.reply('Invalid arguments')
             return
 
+<<<<<<< HEAD
         matches = re.finditer(CURRENCYREGEX, message.content, re.MULTILINE)
         if not matches:
             print()
             return
+=======
+        msg_sep = message.content.split()
+        currency_found = []
+        for word in msg_sep:
+            word = word.translate(str.maketrans('', '', string.punctuation.replace('$', '')))
+            currency = find_currency(word.lower())
+            if currency:
+                currency_found.append(currency)
+                yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
+                today = datetime.strftime(datetime.now(), '%Y-%m-%d')
+
+                if re.search("\d+[\.\,]?\d*k$", msg_sep[msg_sep.index(word) - 1]):
+                    #thousands match
+                    amount = msg_sep[msg_sep.index(word) - 1]
+                    amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+                    amount = float(amount)*1000
+                elif re.search("\d+[\.\,]?\d*", msg_sep[msg_sep.index(word) - 1]):
+                    #previous word match
+                    amount = msg_sep[msg_sep.index(word) - 1]
+                    amount = ''.join([i for i in amount if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+                elif re.search("\d+[\.\,]?\d*k$", word):
+                    #current thousands match
+                    amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+                    amount = float(amount)*1000
+                elif re.search("\d+[\.\,]?\d*", word):
+                    #current word match
+                    amount = ''.join([i for i in word if (i.isnumeric() or i == ',' or i == '.')]).replace(',', '.')
+
+                try:
+                    amount = float(amount)
+                except:
+                    print(f' (error: {amount} is not a float)')
+                    break
+
+                TEMPENVRATE = ENVRATE.copy()
+                try:
+                    TEMPENVRATE.pop(ENVRATE.index(currency['cc'].upper()))
+                except:
+                    pass
+
+                rates = api.get_exchange_rates(
+                    base_currency=currency['cc'],
+                    start_date=yesterday,
+                    end_date=today,
+                    targets=TEMPENVRATE
+                )
+                messageout = (f'{amount} {currency["cc"].upper()} is ')   
+                for i, rate in enumerate(rates[yesterday]):
+                    result = (rates[yesterday][rate] * amount).__round__(2)
+                    if result > 9999:
+                        result = result/1000
+                        messageout += (f'{result.__round__(2)}k {rate} ')
+                    else:
+                        messageout += (f'{result} {rate} ')
+                    if i != len(rates[yesterday]) - 1:
+                        messageout += "or "
+                message_to_send.append(messageout)
+                
+        print(f' ({len(currency_found)} currencies found: {", ".join([c["cc"] for c in currency_found])})', end='')
+        if len(message_to_send) > 0:
+            await message.reply('\n'.join(message_to_send))
+>>>>>>> bcbf166a6cbe7fe6dae2b824586628fca69d1ff2
         
         yesterday = datetime.strftime(datetime.now() - timedelta(1), '%Y-%m-%d')
         today = datetime.strftime(datetime.now(), '%Y-%m-%d')
