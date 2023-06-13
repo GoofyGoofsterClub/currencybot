@@ -16,22 +16,19 @@ with open('currencies.json') as f:
     currencies = json.load(f)
 
 def find_currency(currency):
-    print(currency)
+    if not currency.replace(' ', ''):
+        return None
     for c in currencies:
         alias_re = "^\d+[\.\,]?\d*" + '|'.join(c["aliases"])
         if c['cc'] == currency or currency in c['aliases']:
-            print("check 1 triggered")
             return c
         elif currency.startswith(c['symbol']):
-            print("check 2 triggered")
             currency = currency.replace(c['symbol'], '')
             if currency.replace('k', '').isnumeric():
                 return c
         elif currency.endswith(c['cc']):
-            print("check 3 triggered")
             return c
         elif c['aliases'] and re.search(alias_re, currency):
-            print("check 4 triggered")
             return c
     return None
 
