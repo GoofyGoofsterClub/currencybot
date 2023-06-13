@@ -1,7 +1,6 @@
 import discord
 import os
 import json
-import string
 import re
 from easy_exchange_rates import API
 from datetime import datetime, timedelta
@@ -84,7 +83,6 @@ class MyClient(discord.Client):
 
         currency_data = []
         for matchNum, match in enumerate(matches, start=1):
-            this_rate = ""
             amount_unwrapped = float(match.group(1))
             amount_k = len(match.group(2)) if match.group(2) else 0
             currency = find_currency(match.group(3))
