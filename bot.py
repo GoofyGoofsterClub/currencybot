@@ -17,7 +17,7 @@ with open('currencies.json') as f:
 
 def find_currency(currency):
     for c in currencies:
-        alias_re = "^\d+[\.\,]?\d*" + '|'.join(c["aliases"]) + "$"
+        alias_re = "^\d+[\.\,]?\d*" + '|'.join(c["aliases"])
         if c['cc'] == currency or currency in c['aliases']:
             return c
         elif currency.startswith(c['symbol']):
