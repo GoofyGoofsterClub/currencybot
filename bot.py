@@ -46,7 +46,7 @@ class MyClient(discord.Client):
         if message.author == self.user:
             return
         
-        message.content = re.sub(r'\<\:?\@?\w+(\:\d+)?\>', '', message.content).lower()
+        message.content = re.sub(r'\<(a\:)?\:?\@?\w+(\:\d+)?\>', '', message.content).lower()
 
         print(f"{message.author}: {message.content}", end='')
 
@@ -120,7 +120,7 @@ class MyClient(discord.Client):
         if len(currency_data) == 0:
             return
 
-        message_to_send = f"### <a:DinkDonk:889016538684850249> {len(currency_data)} money mentions detected\n\n" + \
+        message_to_send = f"### <a:DinkDonk:956632861899886702> {len(currency_data)} money mentions detected\n\n" + \
             '\n'.join([f"* {'**' + data['amount'] + '**'} {data['currency']} is {' or '.join([f'*{value:,} {key}*' for key, value in data['rates'].items()])}" for data in currency_data])
         
         await message.reply(message_to_send)
