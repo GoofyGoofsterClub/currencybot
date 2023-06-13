@@ -86,7 +86,7 @@ class MyClient(discord.Client):
             amount_unwrapped = float(match.group(1))
             amount_k = len(match.group(2)) if match.group(2) else 0
             currency = find_currency(match.group(3))
-            if not currency:
+            if currency == None:
                 currency = find_currency(match.group(2) + match.group(3))
                 if currency == None:
                     continue
