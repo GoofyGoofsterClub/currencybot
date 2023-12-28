@@ -2,10 +2,7 @@ import discord
 import os
 import json
 import re
-from easy_exchange_rates import API
 from datetime import datetime, timedelta
-
-currencyapi = api = API()
 
 ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
 ENVTOKEN = os.getenv('DISORD_TOKEN')
