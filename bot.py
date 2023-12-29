@@ -107,7 +107,7 @@ class MyClient(discord.Client):
                     result['product_name'] = data['product_name']
                     amazon_data.append(result)
                 except Exception as e:
-                    raise e
+                    continue
             
             if(len(amazon_data) > 0):
                 response_text = "### <a:DinkDonk:956632861899886702> {} amazon link(s) found.\n".format(len(amazon_data))
