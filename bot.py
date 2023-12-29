@@ -4,6 +4,7 @@ import requests
 import json
 import re
 from datetime import datetime, timedelta
+import api_modules.amazon
 
 ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
 ENVTOKEN = os.getenv('DISORD_TOKEN')
