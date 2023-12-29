@@ -94,10 +94,14 @@ class MyClient(discord.Client):
 
         amazon_url = api_modules.amazon.regex(original_content)
 
+
         if type(amazon_url) == list and len(amazon_url) > 0:
             amazon_data = []
 
             for data in amazon_url:
+                if data['domain'] == 'amazon.cn':
+                    continue
+
                 try:
                     result = api_modules.amazon.get_pricing_info(data['domain'], data['asin'])
                     result['product_name'] = data['product_name']
@@ -110,15 +114,22 @@ class MyClient(discord.Client):
 
                 for k, v in enumerate(amazon_data):
                     try:
-                        currency_data = find_currency(v['currency_symbol'])
-                        response_text += '{}. {} is **{}** **({})**\n'.format(
+                        if v['currency_symbol']:
+                            currency_data = find_currency(v['currency_symbol'])
+
+                            actual_price = '{} {}'.format(v['price'], currency_data['cc'].upper())
+                            converted_price = '{} {}'.format(round(float(get_cur_exchange_rate(currency_data['cc'], ENVRATE[0])) * float(v['price']), 3), find_currency(ENVRATE[0])['cc'].upper())
+                        else:
+                            actual_price = v['unfetched_price_text']
+                            converted_price = '???'
+
+                        response_text += '{}. {} [{}](<{}>) is **{}** **({})**\n'.format(
                             k + 1,
+                            '❓' if v['is_available'] == None else '✅' if v['is_available'] else '�',
                             v['product_name'],
-                            '{} {}'.format(v['price'], currency_data['cc'].upper()),
-                            '{} {}'.format(
-                                round(float(get_cur_exchange_rate(currency_data['cc'], ENVRATE[0])) * float(v['price']), 3),
-                                find_currency(ENVRATE[0])['cc'].upper()
-                            )
+                            v['url'],
+                            actual_price,
+                            converted_price
                         )
                     except:
                         continue
