@@ -120,7 +120,21 @@ class MyClient(discord.Client):
                             currency_data = find_currency(v['currency_symbol'])
 
                             actual_price = '{} {}'.format(v['price'], currency_data['cc'].upper())
-                            converted_price = '{} {}'.format(round(float(get_cur_exchange_rate(currency_data['cc'], ENVRATE[0])) * float(v['price']), 3), find_currency(ENVRATE[0])['cc'].upper())
+                            
+                            converted_prices = []
+
+                            currencies_to_compare = ENVRATE.copy()
+
+                            for defaultCurrency in currencies_to_compare:
+                                currency_obj = find_currency(defaultCurrency)
+                                if currency_obj == currency_data:
+                                    continue
+                                converted_prices.append('{} {}'.format(
+                                    round(float(get_cur_exchange_rate(currency_data['cc'], currency_obj['cc'])) * float(v['price']), 3),
+                                    currency_obj['cc'].upper()
+                                ))
+
+                            converted_price = ', '.join(converted_prices)
                         else:
                             actual_price = v['unfetched_price_text']
                             converted_price = '???'
@@ -143,27 +157,33 @@ class MyClient(discord.Client):
             amount_unwrapped = float(match.group(1))
             amount_k = len(match.group(2)) if match.group(2) else 0
             currency = find_currency(match.group(3))
-            
-            if (currency == find_currency(ENVRATE[0])):
-                continue
+
+            currencies_to_compare = ENVRATE.copy()
+            exchange_rates = []
 
             if (amount_k > 0):
                 amount_unwrapped = amount_unwrapped * (1000 * amount_k)
             
             try:
-                exchange_rate = get_cur_exchange_rate(currency['cc'], ENVRATE[0])
+                for defaultCurrency in currencies_to_compare:
+                    currency_obj = find_currency(defaultCurrency)
+                    if currency == currency_obj:
+                        continue
+                    exchange_rates.append('**{} {}**'.format(
+                        round(amount_unwrapped * get_cur_exchange_rate(currency['cc'], defaultCurrency), 3),
+                        currency_obj['cc'].upper()
+                    ))
+
             except:
                 continue
-            if (not exchange_rate):
+            if (not exchange_rates):
                 await shit_broke(message)
                 return
-            total_value = amount_unwrapped * exchange_rate
 
-            currency_data.append('{} **{}** is {} **{}**'.format(
+            currency_data.append('{} **{}** is {}'.format(
                 amount_unwrapped,
                 currency['cc'].upper(),
-                round(total_value, 3),
-                find_currency(ENVRATE[0])['cc'].upper()
+                ', '.join(exchange_rates)
             ))
 
         if (len(currency_data) < 1):
