@@ -144,6 +144,9 @@ class MyClient(discord.Client):
             amount_k = len(match.group(2)) if match.group(2) else 0
             currency = find_currency(match.group(3))
             
+            if (currency == find_currency(ENVRATE[0])):
+                continue
+
             if (amount_k > 0):
                 amount_unwrapped = amount_unwrapped * (1000 * amount_k)
             
