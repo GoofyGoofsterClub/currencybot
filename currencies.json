@@ -67,7 +67,7 @@
     {"cc":"isk","symbol":"ikr","name":"icelandic kr\u00f3na", "aliases": []},
     {"cc":"jmd","symbol":"j$","name":"jamaican dollar", "aliases": []},
     {"cc":"jod","symbol":"jod","name":"jordanian dinar", "aliases": []},
-    {"cc":"jpy","symbol":"\u00a5","name":"japanese yen", "aliases": ["yen(s)?", "en"]},
+    {"cc":"jpy","symbol":"\u00a5","name":"japanese yen", "aliases": ["yen(s)?", "en", "￥"]},
     {"cc":"kes","symbol":"ksh","name":"kenyan shilling", "aliases": []},
     {"cc":"kgs","symbol":"\u0441\u043e\u043c","name":"kyrgyzstani som", "aliases": []},
     {"cc":"khr","symbol":"\u17db","name":"cambodian riel", "aliases": []},
