@@ -60,6 +60,7 @@ class MyClient(discord.Client):
         if message.author == self.user:
             return
         
+        original_content = message.content
         message.content = re.sub(r'\<(a\:)?\:?\@?\w+(\:\d+)?\>', '', message.content).lower()
 
         print(f"{message.author}: {message.content}", end='')
@@ -91,6 +92,38 @@ class MyClient(discord.Client):
         matches = re.finditer(CURRENCYREGEX, message.content, re.MULTILINE)
         print('')
 
+        amazon_url = api_modules.amazon.regex(original_content)
+
+        if type(amazon_url) == list and len(amazon_url) > 0:
+            amazon_data = []
+
+            for data in amazon_url:
+                try:
+                    result = api_modules.amazon.get_pricing_info(data['domain'], data['asin'])
+                    result['product_name'] = data['product_name']
+                    amazon_data.append(result)
+                except Exception as e:
+                    raise e
+            
+            if(len(amazon_data) > 0):
+                response_text = "### <a:DinkDonk:956632861899886702> {} amazon link(s) found.\n".format(len(amazon_data))
+
+                for k, v in enumerate(amazon_data):
+                    try:
+                        currency_data = find_currency(v['currency_symbol'])
+                        response_text += '{}. {} is **{}** **({})**\n'.format(
+                            k + 1,
+                            v['product_name'],
+                            '{} {}'.format(v['price'], currency_data['cc'].upper()),
+                            '{} {}'.format(
+                                round(float(get_cur_exchange_rate(currency_data['cc'], ENVRATE[0])) * float(v['price']), 3),
+                                find_currency(ENVRATE[0])['cc'].upper()
+                            )
+                        )
+                    except:
+                        continue
+
+                await message.reply(response_text)
         currency_data = []
 
         for matchNum, match in enumerate(matches, start=1):
@@ -101,7 +134,10 @@ class MyClient(discord.Client):
             if (amount_k > 0):
                 amount_unwrapped = amount_unwrapped * (1000 * amount_k)
             
-            exchange_rate = get_cur_exchange_rate(currency['cc'], ENVRATE[0])
+            try:
+                exchange_rate = get_cur_exchange_rate(currency['cc'], ENVRATE[0])
+            except:
+                continue
             if (not exchange_rate):
                 await shit_broke(message)
                 return
@@ -113,7 +149,6 @@ class MyClient(discord.Client):
                 round(total_value, 3),
                 find_currency(ENVRATE[0])['cc'].upper()
             ))
-        
 
         if (len(currency_data) < 1):
             return
