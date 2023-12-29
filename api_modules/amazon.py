@@ -8,11 +8,17 @@ swatch_pattern = r'<spanclass=\"a-size-minitwisterSwatchPrice\">(.*)(<\/span><\/
 
 def regex(url):
     if re.match(pattern, url):
-        regex_match = list(re.findall(pattern, url))[0]
-        return {
-            "domain": "amazon.{}".format(regex_match[0]),
-            "asin": regex_match[4]
-        }
+        regex_match = list(re.findall(pattern, url))
+
+        results = []
+
+        for match in regex_match:
+            results.append({
+                "domain": "amazon.{}".format(match[0]),
+                "asin": match[4]
+            })
+        
+        return results
     return False
 
 def get_pricing_info(domain, asin):
