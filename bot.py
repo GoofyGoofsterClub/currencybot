@@ -192,9 +192,9 @@ class MyClient(discord.Client):
         response_text = "### <a:DinkDonk:956632861899886702> {} currency mentions found.\n".format(len(currency_data))
 
         for k, v in enumerate(currency_data):
-            response_text += '{}. {}\n'.format(k+1, v)
-        
-        await message.reply(response_text)
+            response_text += '{}. {}\n'.format(k+1, v)        
+
+        await message.reply(response_text[:1999])
 
             
 intents = discord.Intents.default()
