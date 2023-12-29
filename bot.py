@@ -19,7 +19,7 @@ def find_currency(currency):
         return None
     
     currency = currency.lower()
-    
+
     for c in currencies:
         if c['cc'] == currency:
             return c
@@ -115,6 +115,8 @@ class MyClient(discord.Client):
                 for k, v in enumerate(amazon_data):
                     try:
                         if v['currency_symbol']:
+                            v['currency_symbol'] = v['currency_symbol'].replace('.', '').strip()
+                            if (v['currency_symbol'] == '$'): v['currency_symbol'] = 'usd'
                             currency_data = find_currency(v['currency_symbol'])
 
                             actual_price = '{} {}'.format(v['price'], currency_data['cc'].upper())
@@ -131,7 +133,7 @@ class MyClient(discord.Client):
                             actual_price,
                             converted_price
                         )
-                    except:
+                    except Exception as e:
                         continue
 
                 await message.reply(response_text)
