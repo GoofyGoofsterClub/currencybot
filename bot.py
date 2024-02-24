@@ -167,6 +167,9 @@ class MyClient(discord.Client):
 
             if (amount_k > 0):
                 amount_unwrapped = amount_unwrapped * (1000 * amount_k)
+
+            if (amount_unwrapped == 0):
+                continue
             
             try:
                 for defaultCurrency in currencies_to_compare:
