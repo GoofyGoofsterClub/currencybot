@@ -14,6 +14,11 @@ def regex(url):
     if re.findall(pattern, url):
         regex_match = list(re.findall(pattern, url))
 
+        # TO-DO: REMOVE after fix
+        print(f"~~~~~~~~~~~~~~~~~~~~")
+        print(f"::!:: {regex_match}")
+        print(f"~~~~~~~~~~~~~~~~~~~~")
+
         results = []
 
         for match in regex_match:
