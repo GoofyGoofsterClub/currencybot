@@ -49,7 +49,9 @@ def get_product_name(domain, asin):
     
 
 def get_pricing_info(domain, asin):
-    request_data = requests.post("https://{2}/gp/twister/dimension?isDimensionSlotsAjax=1&asinList={0}&vs=1&productTypeDefinition=INTERNAL_MEMORY&productGroupId=ce_display_on_website&parentAsin={0}&isPrime=0&qid={1}&sr=8-1&isOneClickEnabled=0&originalHttpReferer=https://amazon.com&keywords=&landingAsin={0}&deviceType=web&showFancyPrice=true&twisterFlavor=twisterPlusDesktopConfigurator".format(asin, round(time.time()), domain), headers=specific_headers)
+    domain_formatted = "https://{2}/gp/twister/dimension?isDimensionSlotsAjax=1&asinList={0}&vs=1&productTypeDefinition=INTERNAL_MEMORY&productGroupId=ce_display_on_website&parentAsin={0}&isPrime=0&qid={1}&sr=8-1&isOneClickEnabled=0&originalHttpReferer=https://amazon.com&keywords=&landingAsin={0}&deviceType=web&showFancyPrice=true&twisterFlavor=twisterPlusDesktopConfigurator".format(asin, round(time.time()), domain)
+    print(domain_formatted)
+    request_data = requests.post(domain_formatted, headers=specific_headers)
 
     # amazon.se has a protection against automated requests, absolute goofsters.
     if request_data.status_code != 200:
