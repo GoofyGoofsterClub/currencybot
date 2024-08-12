@@ -4,7 +4,6 @@ import requests
 import json
 import re
 from datetime import datetime, timedelta
-import api_modules.amazon
 
 ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
 ENVTOKEN = os.getenv('DISORD_TOKEN')
@@ -96,65 +95,6 @@ class MyClient(discord.Client):
         matches = re.finditer(CURRENCYREGEX, message.content, re.MULTILINE)
         print('')
 
-        amazon_url = api_modules.amazon.regex(original_content)
-
-
-        if type(amazon_url) == list and len(amazon_url) > 0:
-            amazon_data = []
-
-            for data in amazon_url:
-                if data['domain'] == 'amazon.cn':
-                    continue
-
-                try:
-                    result = api_modules.amazon.get_pricing_info(data['domain'], data['asin'])
-                    result['product_name'] = data['product_name']
-                    amazon_data.append(result)
-                except Exception as e:
-                    continue
-            
-            if(len(amazon_data) > 0):
-                response_text = "### <a:DinkDonk:956632861899886702> {} amazon link(s) found.\n".format(len(amazon_data))
-
-                for k, v in enumerate(amazon_data):
-                    try:
-                        if v['currency_symbol']:
-                            v['currency_symbol'] = v['currency_symbol'].replace('.', '').strip()
-                            if (v['currency_symbol'] == '$'): v['currency_symbol'] = 'usd'
-                            currency_data = find_currency(v['currency_symbol'])
-
-                            actual_price = '{} {}'.format(v['price'], currency_data['cc'].upper())
-                            
-                            converted_prices = []
-
-                            currencies_to_compare = ENVRATE.copy()
-
-                            for defaultCurrency in currencies_to_compare:
-                                currency_obj = find_currency(defaultCurrency)
-                                if currency_obj == currency_data:
-                                    continue
-                                converted_prices.append('{} {}'.format(
-                                    round(float(get_cur_exchange_rate(currency_data['cc'], currency_obj['cc'])) * float(v['price']), 3),
-                                    currency_obj['cc'].upper()
-                                ))
-
-                            converted_price = ', '.join(converted_prices)
-                        else:
-                            actual_price = v['unfetched_price_text']
-                            converted_price = '???'
-
-                        response_text += '{}. {} [{}](<{}>) is **{}** **({})**\n'.format(
-                            k + 1,
-                            '❓' if v['is_available'] == None else '✅' if v['is_available'] else '�',
-                            v['product_name'],
-                            v['url'],
-                            actual_price,
-                            converted_price
-                        )
-                    except Exception as e:
-                        continue
-
-                await message.reply(response_text)
         currency_data = []
 
         for matchNum, match in enumerate(matches, start=1):
