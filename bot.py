@@ -4,6 +4,8 @@ import requests
 import json
 import re
 from datetime import datetime, timedelta
+from utility.convert import get_cur_exchange_rate
+from utility.text import find_currency, does_text_contain_currency
 
 ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
 ENVTOKEN = os.getenv('DISCORD_TOKEN')
@@ -12,39 +14,6 @@ CURRENCYREGEX = r"(\d+\.?\d*)(k*)? ?(\w+)"
 
 with open('currencies.json') as f:
     currencies = json.load(f)
-
-def find_currency(currency):
-    if not currency.strip():
-        return None
-    
-    currency = currency.lower()
-
-    for c in currencies:
-        if c['cc'] == currency:
-            return c
-        if any([re.match(alias, currency) for alias in c['aliases']]):
-            return c
-    return None
-
-def does_text_contain_currency(text):
-    for c in currencies:
-        if c['cc'] in text:
-            return c
-    return False
-
-def get_cur_exchange_rate(cur1, cur2):
-    r = requests.get('https://duckduckgo.com/js/spice/currency/1/{}/{}'.format(cur1, cur2))
-
-    if (r.status_code != 200):
-        return False
-
-    try:
-        unwrapped_response = r.text[r.text.find('\n') + 1 : r.text.rfind('\n') - 2]
-        json_response = json.loads(unwrapped_response)
-        value = json_response['to'][0]['mid']
-    except:
-        return False
-    return value
 
 async def shit_broke(message):
     await message.reply("Shit broke. You're either brainded or blame [DuckDuckGo](https://duckduckgo.com).")
