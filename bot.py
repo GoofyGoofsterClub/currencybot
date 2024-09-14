@@ -22,6 +22,11 @@ COMMANDS = {
 with open('currencies.json') as f:
     currencies = json.load(f)
 
+_globals = {
+    "ENVRATE": ENVRATE,
+    "currencies": currencies
+}
+
 async def shit_broke(message):
     await message.reply("Shit broke. You're either brainded or blame [DuckDuckGo](https://duckduckgo.com).")
     return True
@@ -51,12 +56,12 @@ class MyClient(discord.Client):
             
             # Checking in dictionary of commands and running the function specified
             if command in COMMANDS:
-                return await COMMANDS[command].run(message, args)
+                return await COMMANDS[command]['run'](message, args, _globals)
             
             # Checking for aliases
             alias_test = find_command_in_alias(command, COMMANDS)
             if alias_test:
-                return await COMMANDS[alias_test].run(message, args)
+                return await COMMANDS[alias_test]['run'](message, args, _globals)
 
             return
 

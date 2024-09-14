@@ -1,11 +1,11 @@
 from utility.text import find_currency
 from utility.convert import get_cur_exchange_rate
 
-async def convert(message, args):
+async def convert(message, args, _globals):
     if len(args) == 3:
         amount = args[0]
-        currency = find_currency(args[1], currencies)
-        to_currency = find_currency(args[2], currencies)
+        currency = find_currency(args[1], _globals['currencies'])
+        to_currency = find_currency(args[2], _globals['currencies'])
         
         if currency == None or to_currency == None:
             await message.reply("Please check the currency specified.")
