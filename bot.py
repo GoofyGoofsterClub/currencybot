@@ -6,7 +6,7 @@ import re
 from datetime import datetime, timedelta
 
 ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
-ENVTOKEN = os.getenv('DISORD_TOKEN')
+ENVTOKEN = os.getenv('DISCORD_TOKEN')
 ENVPREFIX = os.getenv('BOT_PREFIX')
 CURRENCYREGEX = r"(\d+\.?\d*)(k*)? ?(\w+)"
 

@@ -5,6 +5,6 @@ services:
     container_name: discord-currency
     restart: always
     environment:
-    - DISORD_TOKEN=yourdiscordtokenhere
+    - DISCORD_TOKEN=yourdiscordtokenhere
     - DEFAULT_CURRENCY=SEK,RUB,JPY
     - BOT_PREFIX=$
