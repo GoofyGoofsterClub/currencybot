@@ -1,4 +1,4 @@
-def find_currency(currency):
+def find_currency(currency, currencies):
     if not currency.strip():
         return None
     
@@ -11,7 +11,7 @@ def find_currency(currency):
             return c
     return None
 
-def does_text_contain_currency(text):
+def does_text_contain_currency(text, currencies):
     for c in currencies:
         if c['cc'] in text:
             return c

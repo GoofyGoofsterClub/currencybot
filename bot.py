@@ -29,8 +29,11 @@ class MyClient(discord.Client):
             return
         
         original_content = message.content
+
+        # This regex removes emotes from the message, so it doesnt pick up random emotes as currency / value.
         message.content = re.sub(r'\<(a\:)?\:?\@?\w+(\:\d+)?\>', '', message.content).lower()
 
+        # Log out the message for better debugging
         print(f"{message.author}: {message.content}", end='')
 
         if message.content.startswith(ENVPREFIX):
@@ -40,8 +43,8 @@ class MyClient(discord.Client):
                 args = message.content.split()[1:]
                 if len(args) == 3:
                     amount = args[0]
-                    currency = find_currency(args[1])
-                    to_currency = find_currency(args[2])
+                    currency = find_currency(args[1], currencies)
+                    to_currency = find_currency(args[2], currencies)
 
                     if currency == None or to_currency == None:
                         await message.reply("Please check the currency specified.")
@@ -69,7 +72,7 @@ class MyClient(discord.Client):
         for matchNum, match in enumerate(matches, start=1):
             amount_unwrapped = float(match.group(1))
             amount_k = len(match.group(2)) if match.group(2) else 0
-            currency = find_currency(match.group(3))
+            currency = find_currency(match.group(3), currencies)
 
             currencies_to_compare = ENVRATE.copy()
             exchange_rates = []
@@ -82,7 +85,7 @@ class MyClient(discord.Client):
             
             try:
                 for defaultCurrency in currencies_to_compare:
-                    currency_obj = find_currency(defaultCurrency)
+                    currency_obj = find_currency(defaultCurrency, currencies)
                     if currency == currency_obj:
                         continue
                     exchange_rates.append('**{} {}**'.format(
