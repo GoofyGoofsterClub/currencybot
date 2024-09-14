@@ -4,7 +4,7 @@ import json
 import re
 from datetime import datetime, timedelta
 from utility.convert import get_cur_exchange_rate
-from utility.text import find_currency, does_text_contain_currency
+from utility.text import find_currency, does_text_contain_currency, find_command_in_alias
 from commands.convert import convert as command_convert
 
 ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
