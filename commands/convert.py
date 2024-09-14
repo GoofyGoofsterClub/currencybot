@@ -1,4 +1,5 @@
 from utility.text import find_currency
+from utility.misc import shit_broke
 from utility.convert import get_cur_exchange_rate
 
 async def convert(message, args, _globals):
