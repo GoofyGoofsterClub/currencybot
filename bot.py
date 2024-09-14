@@ -5,11 +5,19 @@ import re
 from datetime import datetime, timedelta
 from utility.convert import get_cur_exchange_rate
 from utility.text import find_currency, does_text_contain_currency
+from commands.convert import convert as command_convert
 
 ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
 ENVTOKEN = os.getenv('DISCORD_TOKEN')
 ENVPREFIX = os.getenv('BOT_PREFIX')
 CURRENCYREGEX = r"(\d+\.?\d*)(k*)? ?(\w+)"
+
+COMMANDS = {
+    "convert": {
+        "run": command_convert,
+        "alias": ["cc"]
+    }
+}
 
 with open('currencies.json') as f:
     currencies = json.load(f)
@@ -35,33 +43,24 @@ class MyClient(discord.Client):
         # Log out the message for better debugging
         print(f"{message.author}: {message.content}", end='')
 
+        # Commands
         if message.content.startswith(ENVPREFIX):
             print(' (command)', end='')
             command = message.content.split()[0][1:]
-            if command == "convert":
-                args = message.content.split()[1:]
-                if len(args) == 3:
-                    amount = args[0]
-                    currency = find_currency(args[1], currencies)
-                    to_currency = find_currency(args[2], currencies)
+            args = message.content.split()[1:]
+            
+            # Checking in dictionary of commands and running the function specified
+            if command in COMMANDS:
+                return await COMMANDS[command].run(message, args)
+            
+            # Checking for aliases
+            alias_test = find_command_in_alias(command, COMMANDS)
+            if alias_test:
+                return await COMMANDS[alias_test].run(message, args)
 
-                    if currency == None or to_currency == None:
-                        await message.reply("Please check the currency specified.")
-                        return
-
-                    converted = get_cur_exchange_rate(
-                        currency['cc'],
-                        to_currency['cc']
-                    )
-                    if (not converted):
-                        await shit_broke(message)
-                        return
-
-                    total_value = float(amount) * float(converted)
-                    await message.reply(f'{amount} {currency["cc"].upper()} is ~{round(total_value, 3)} {to_currency["cc"].upper()}.')
-                else:
-                    await message.reply('Invalid arguments')
             return
+
+        # In-text conversion
 
         matches = re.finditer(CURRENCYREGEX, message.content, re.MULTILINE)
         print('')
