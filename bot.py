@@ -6,12 +6,18 @@ from utility.convert import get_cur_exchange_rate
 from utility.text import find_currency, does_text_contain_currency, find_command_in_alias
 from utility.misc import shit_broke
 from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
+# Commands
 from commands.convert import convert as command_convert
+from commands.math import math as command_math
 
 COMMANDS = {
     "convert": {
         "run": command_convert,
         "alias": ["cc"]
+    },
+    "math": {
+        "run": command_math,
+        "alias": ["m"]
     }
 }
 
