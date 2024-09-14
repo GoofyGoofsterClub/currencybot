@@ -35,7 +35,7 @@ $ python3 bot.py
 
 - [x] Automatic in-conversation currency conversion;
 - [x] Command for manual conversion (`$convert 100 USD JPY`);
-- [ ] Safe math functions;
+- [x] Safe math functions;
 - [ ] Automatic services price parsing and conversion.
     - [ ] Amazon (GLOBAL);
     - [ ] Blocket.se (Sweden);
