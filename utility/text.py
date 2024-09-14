@@ -1,3 +1,5 @@
+import re
+
 def find_currency(currency, currencies):
     if not currency.strip():
         return None

@@ -1,3 +1,6 @@
+import requests
+import json
+
 def get_cur_exchange_rate(cur1, cur2):
     r = requests.get('https://duckduckgo.com/js/spice/currency/1/{}/{}'.format(cur1, cur2))
 

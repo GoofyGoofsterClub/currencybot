@@ -1,6 +1,5 @@
 import discord
 import os
-import requests
 import json
 import re
 from datetime import datetime, timedelta
