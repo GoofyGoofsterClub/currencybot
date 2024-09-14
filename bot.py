@@ -1,16 +1,12 @@
 import discord
-import os
 import json
 import re
 from datetime import datetime, timedelta
 from utility.convert import get_cur_exchange_rate
 from utility.text import find_currency, does_text_contain_currency, find_command_in_alias
+from utility.misc import shit_broke
+from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
 from commands.convert import convert as command_convert
-
-ENVRATE = os.getenv("DEFAULT_CURRENCY").split(',')
-ENVTOKEN = os.getenv('DISCORD_TOKEN')
-ENVPREFIX = os.getenv('BOT_PREFIX')
-CURRENCYREGEX = r"(\d+\.?\d*)(k*)? ?(\w+)"
 
 COMMANDS = {
     "convert": {
@@ -26,10 +22,6 @@ _globals = {
     "ENVRATE": ENVRATE,
     "currencies": currencies
 }
-
-async def shit_broke(message):
-    await message.reply("Shit broke. You're either brainded or blame [DuckDuckGo](https://duckduckgo.com).")
-    return True
 
 class MyClient(discord.Client):
     async def on_ready(self):
