@@ -28,7 +28,7 @@ def find_command_in_alias(command, commands_dict):
 
 # Unwrap the K value
 def unwrap_number(number):
-    matches = re.search(NUMBERREGEX, number)
+    match = re.search(NUMBERREGEX, number)
     amount_k = len(match.group(2)) if match.group(2) else 0
     amount_unwrapped = float(match.group(1))
     if amount_k > 0:
