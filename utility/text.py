@@ -18,3 +18,9 @@ def does_text_contain_currency(text, currencies):
         if c['cc'] in text:
             return c
     return False
+
+def find_command_in_alias(command, commands_dict):
+    for key, value in commands_dict.items():
+        if 'alias' in value and command in value['alias']:
+            return key
+    return None
