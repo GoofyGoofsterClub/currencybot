@@ -73,13 +73,15 @@ class MyClient(discord.Client):
         for matchNum, match in enumerate(matches, start=1):
             amount_unwrapped = float(match.group(1))
             amount_k = len(match.group(2)) if match.group(2) else 0
-            currency = find_currency(match.group(3), currencies)
+            currency = find_currency(match.group(4), currencies)
 
             currencies_to_compare = ENVRATE.copy()
             exchange_rates = []
 
             if (amount_k > 0):
                 amount_unwrapped = amount_unwrapped * (1000 ** amount_k)
+
+            print(amount_unwrapped)
 
             if (amount_unwrapped == 0):
                 continue
