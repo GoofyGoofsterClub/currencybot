@@ -9,6 +9,7 @@ from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
 # Commands
 from commands.convert import convert as command_convert
 from commands.math import math as command_math
+from commands.date import date as command_date
 
 COMMANDS = {
     "convert": {
@@ -18,6 +19,10 @@ COMMANDS = {
     "math": {
         "run": command_math,
         "alias": ["m"]
+    },
+    "date": {
+        "run": command_date,
+        "alias": ["d"]
     }
 }
 
