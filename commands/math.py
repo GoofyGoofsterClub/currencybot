@@ -1,9 +1,9 @@
 import numexpr
 
 async def math(message, args, _globals):
-    if len(args) == 1:
+    if len(args) >= 1:
         try:
-            result = numexpr.evaluate(args[0]).item()
+            result = numexpr.evaluate(args.join("")).item()
         except:
             await message.reply("Wrong equation.")
             return
