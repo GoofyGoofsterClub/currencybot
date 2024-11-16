@@ -139,7 +139,10 @@ class MyClient(discord.Client):
         for i in range(len(rg)):
             rt = re.finditer(rg[i], message.content)
             for matchNum, match in enumerate(rt, start=1):
-                LINK_RESULTS.append(MODULE_REGEX[rg[i]](match.string))
+                try:
+                    LINK_RESULTS.append(MODULE_REGEX[rg[i]](match.string))
+                except:
+                    pass
 
         if (len(currency_data) < 1 and len(LINK_RESULTS) < 1):
             return
