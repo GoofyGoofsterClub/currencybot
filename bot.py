@@ -158,7 +158,7 @@ class MyClient(discord.Client):
 
             for i in range(len(LINK_RESULTS)):
                 curr_info = find_currency(LINK_RESULTS[i]['currency'], currencies)
-                response_text += f'{i}. [{LINK_RESULTS[i]['name']}](<{LINK_RESULTS[i]['link']}>) is '
+                response_text += f'{i}. [{LINK_RESULTS[i]["name"]}](<{LINK_RESULTS[i]["link"]}>) is '
                 exchange_info = []
                 defPrice = LINK_RESULTS[i]['price']
                 currencies_to_compare = ENVRATE.copy()
