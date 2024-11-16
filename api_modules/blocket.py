@@ -14,7 +14,7 @@ def parse_price(url):
     # schizo
     token_req = get("https://www.blocket.se/api/adout-api-route/refresh-token-and-validate-session").json()
 
-    listing_id = re.search(LINK_REGEX, url).group(2)
+    listing_id = re.search(LINK_REGEX, url).group(3)
 
     r = get(f'https://api.blocket.se/search_bff/v2/content/{listing_id}',  headers={
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
