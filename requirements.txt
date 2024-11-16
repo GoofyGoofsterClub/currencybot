@@ -3,3 +3,4 @@ discord.py
 pandas
 numexpr
 dateparser
+beautifulsoup4

@@ -1,6 +1,8 @@
 import discord
 import json
 import re
+import importlib
+from glob import glob
 from datetime import datetime, timedelta
 from utility.convert import get_cur_exchange_rate
 from utility.text import find_currency, does_text_contain_currency, find_command_in_alias
@@ -28,6 +30,20 @@ COMMANDS = {
 
 with open('currencies.json') as f:
     currencies = json.load(f)
+
+MODULES = []
+MODULE_REGEX = {}
+
+_temp_module_files = glob("./api_modules/**/*.py", recursive=True)
+
+for i in range(len(_temp_module_files)):
+    module_name = _temp_module_files[i][2::][:-3].replace("/", ".")
+    print(f"{i} :: Loading module {module_name}...")
+    MODULES.append(importlib.import_module(module_name))
+    MODULE_REGEX[MODULES[len(MODULES) - 1].LINK_REGEX] = MODULES[len(MODULES) - 1].parse_price
+
+del _temp_module_files
+print(f"Loaded {len(MODULES)} API module(s)...")
 
 _globals = {
     "ENVRATE": ENVRATE,
@@ -113,13 +129,50 @@ class MyClient(discord.Client):
                 ', '.join(exchange_rates)
             ))
 
-        if (len(currency_data) < 1):
+        ## Getting links & parsing
+        # Doing it after because it requires more time to process.
+
+        rg = list(MODULE_REGEX.keys())
+
+        LINK_RESULTS = []
+
+        for i in range(len(rg)):
+            rt = re.finditer(rg[i], message.content)
+            for matchNum, match in enumerate(rt, start=1):
+                LINK_RESULTS.append(MODULE_REGEX[rg[i]](match.string))
+
+        if (len(currency_data) < 1 and len(LINK_RESULTS) < 1):
             return
         
-        response_text = "### <a:DinkDonk:956632861899886702> {} currency mentions found.\n".format(len(currency_data))
+        response_text = ""
 
-        for k, v in enumerate(currency_data):
-            response_text += '{}. {}\n'.format(k+1, v)
+        if len(currency_data) > 0:
+            response_text += "### <a:DinkDonk:956632861899886702> {} currency mentions found.\n".format(len(currency_data))
+
+            for k, v in enumerate(currency_data):
+                response_text += '{}. {}\n'.format(k+1, v)
+
+        if (len(LINK_RESULTS) > 0):
+            response_text += "\n\n### <a:DinkDonk:956632861899886702> {} links found.\n".format(len(LINK_RESULTS))
+            i = 1
+
+            for i in range(len(LINK_RESULTS)):
+                curr_info = find_currency(LINK_RESULTS[i]['currency'], currencies)
+                response_text += f'{i}. [{LINK_RESULTS[i]['name']}](<{LINK_RESULTS[i]['link']}>) is '
+                exchange_info = []
+                defPrice = LINK_RESULTS[i]['price']
+                currencies_to_compare = ENVRATE.copy()
+
+                for defaultCurrency in currencies_to_compare:
+                    currency_obj = find_currency(defaultCurrency, currencies)
+                    if curr_info == currency_obj:
+                        continue
+                    exchange_info.append('**{} {}**'.format(
+                        round(defPrice * get_cur_exchange_rate(curr_info['cc'], defaultCurrency), 3),
+                        currency_obj['cc'].upper()
+                    ))
+                response_text += f"{', '.join(exchange_info)}\n"
+                i += 1
 
         n = 1900
         responses = [response_text[i:i+n] for i in range(0, len(response_text), n)]
