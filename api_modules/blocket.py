@@ -1,7 +1,7 @@
 import re
 from json import loads
 from requests import get
-LINK_REGEX = r"https?:\/\/www\.blocket\.se\/annons\/\w+\/(.*)\/(\d+)"
+LINK_REGEX = r"(https?:\/\/www\.blocket\.se\/annons\/\w+\/(.*)\/(\d+))"
 
 def regex_match(string):
     return re.match(LINK_REGEX, string)

@@ -2,7 +2,7 @@ import re
 from json import loads
 from requests import get
 from bs4 import BeautifulSoup
-LINK_REGEX = r"http(s)?:\/\/(www\.)?amazon((\.(\w+))?\.(\w+))\/(-\/)?([a-z]{2}\/)?((.*)\/)?dp\/(\w+)"
+LINK_REGEX = r"(http(s)?:\/\/(www\.)?amazon((\.(\w+))?\.(\w+))\/(-\/)?([a-z]{2}\/)?((.*)\/)?dp\/(\w+))"
 
 def regex_match(string):
     return re.match(LINK_REGEX, string)
