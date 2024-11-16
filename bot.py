@@ -135,12 +135,12 @@ class MyClient(discord.Client):
         rg = list(MODULE_REGEX.keys())
 
         LINK_RESULTS = []
-
+        match = None
         for i in range(len(rg)):
             rt = re.finditer(rg[i], message.content)
             for matchNum, match in enumerate(rt, start=1):
                 try:
-                    LINK_RESULTS.append(MODULE_REGEX[rg[i]](match.string))
+                    LINK_RESULTS.append(MODULE_REGEX[rg[i]](match[0]))
                 except:
                     pass
 
