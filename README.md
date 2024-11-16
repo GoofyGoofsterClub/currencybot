@@ -38,7 +38,7 @@ $ python3 bot.py
 - [x] Safe math functions;
 - [ ] Automatic services price parsing and conversion.
     - [x] Amazon (GLOBAL);
-    - [ ] Blocket.se (Sweden);
+    - [x] Blocket.se (Sweden);
     - [ ] Aliexpress (GLOBAL);
     - [ ] Steam (using their API, GLOBAL);
     - [ ] prisjakt.nu (Sweden);
