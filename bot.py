@@ -156,7 +156,7 @@ class MyClient(discord.Client):
                 response_text += '{}. {}\n'.format(k+1, v)
 
         if (len(LINK_RESULTS) > 0):
-            response_text += "\n\n### <a:DinkDonk:956632861899886702> {} links found.\n".format(len(LINK_RESULTS))
+            response_text += "\n### <a:DinkDonk:956632861899886702> {} links found.\n".format(len(LINK_RESULTS))
             i = 1
 
             for i in range(len(LINK_RESULTS)):
