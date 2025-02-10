@@ -1,0 +1,13 @@
+[
+    {
+        "cc": "lunch",
+        "alias": [
+            "lunch(es)?"
+        ],
+        "unit": {
+            "currency_unit": 1,
+            "conversion_unit": "SEK",
+            "conversion_amount": 145.0
+        }
+    }
+]

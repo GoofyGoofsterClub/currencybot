@@ -31,6 +31,9 @@ COMMANDS = {
 with open('currencies.json') as f:
     currencies = json.load(f)
 
+with open('custom.json') as f:
+    custom_currencies = json.load(f)
+
 MODULES = []
 MODULE_REGEX = {}
 
@@ -96,6 +99,7 @@ class MyClient(discord.Client):
             amount_k = len(match.group(2)) if match.group(2) else 0
             currency = find_currency(match.group(4), currencies)
 
+
             currencies_to_compare = ENVRATE.copy()
             exchange_rates = []
 
@@ -107,18 +111,35 @@ class MyClient(discord.Client):
             if (amount_unwrapped == 0):
                 continue
             
-            try:
+            CUSTOM_CURRENCY = False
+
+            if (not currency):
+                CUSTOM_CURRENCY = True
+                currency = find_currency(match.group(4), custom_currencies)
+                from_currency = currency['unit']['conversion_unit']
                 for defaultCurrency in currencies_to_compare:
                     currency_obj = find_currency(defaultCurrency, currencies)
                     if currency == currency_obj:
                         continue
                     exchange_rates.append('**{} {}**'.format(
-                        round(amount_unwrapped * get_cur_exchange_rate(currency['cc'], defaultCurrency), 3),
+                        round(amount_unwrapped * currency['unit']['conversion_amount'] * get_cur_exchange_rate(from_currency, defaultCurrency), 3),
                         currency_obj['cc'].upper()
                     ))
 
-            except:
-                continue
+            if not CUSTOM_CURRENCY:
+                try:
+                    for defaultCurrency in currencies_to_compare:
+                        currency_obj = find_currency(defaultCurrency, currencies)
+                        if currency == currency_obj:
+                            continue
+                        exchange_rates.append('**{} {}**'.format(
+                            round(amount_unwrapped * get_cur_exchange_rate(currency['cc'], defaultCurrency), 3),
+                            currency_obj['cc'].upper()
+                        ))
+
+                except:
+                    continue
+            
             if (not exchange_rates):
                 await shit_broke(message)
                 return
