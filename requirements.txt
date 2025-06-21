@@ -4,3 +4,4 @@ pandas
 numexpr
 dateparser
 beautifulsoup4
+yfinance
