@@ -7,6 +7,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
+# Ensure SSL is installed
+RUN apk add --no-cache \
+    ca-certificates \
+    openssl \
+    && update-ca-certificates
+
+RUN apk add --no-cache openssl-dev
+
 # Install pip requirements
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
