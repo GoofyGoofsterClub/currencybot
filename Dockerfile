@@ -8,12 +8,13 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Ensure SSL is installed
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
+    curl \
     openssl \
-    && update-ca-certificates
-
-RUN apk add --no-cache openssl-dev
+    libssl-dev \
+    && update-ca-certificates \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install pip requirements
 COPY requirements.txt .
