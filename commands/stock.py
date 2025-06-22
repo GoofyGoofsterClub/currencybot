@@ -20,6 +20,8 @@ def get_stock_info(symbol: str):
     }
 
 async def stock(message, args, _globals):
+    await message.reply("i will fix this later")
+    return # TODO: Fix this shit
     if len(args) >= 1:
         try:
             st = get_stock_info(args[0])
