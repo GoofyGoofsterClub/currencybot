@@ -1,7 +1,7 @@
 requests
 discord.py
 pandas
-numexpr
+numexpr==2.10.2
 dateparser
 beautifulsoup4
 yfinance
