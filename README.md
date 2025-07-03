@@ -58,4 +58,4 @@ $ python3 bot.py
     - [ ] ZOZOTown (Japan);
     - [ ] Ebay (GLOBAL);
     - [ ] Etsy (GLOBAL);
-    - [ ] Kronofogden Auktion (Sweden);
+    - [x] Kronofogden Auktion (Sweden);
