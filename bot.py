@@ -3,213 +3,187 @@ import json
 import re
 import importlib
 from glob import glob
-from datetime import datetime, timedelta
+
 from utility.convert import get_cur_exchange_rate
-from utility.text import find_currency, does_text_contain_currency, find_command_in_alias
+from utility.text import find_currency, find_command_in_alias
 from utility.misc import shit_broke
 from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
-# Commands
+
 from commands.convert import convert as command_convert
 from commands.math import math as command_math
 from commands.date import date as command_date
 from commands.stock import stock as command_stock
 
+
 COMMANDS = {
-    "convert": {
-        "run": command_convert,
-        "alias": ["cc"]
-    },
-    "math": {
-        "run": command_math,
-        "alias": ["m"]
-    },
-    "date": {
-        "run": command_date,
-        "alias": ["d"]
-    },
-    "stock": {
-        "run": command_stock,
-        "alias": ["st"]
-    }
+    "convert": {"run": command_convert, "alias": ["cc"]},
+    "math": {"run": command_math, "alias": ["m"]},
+    "date": {"run": command_date, "alias": ["d"]},
+    "stock": {"run": command_stock, "alias": ["st"]},
 }
 
-with open('currencies.json') as f:
+with open("currencies.json") as f:
     currencies = json.load(f)
 
-with open('custom.json') as f:
+with open("custom.json") as f:
     custom_currencies = json.load(f)
 
 MODULES = []
 MODULE_REGEX = {}
 
-_temp_module_files = glob("./api_modules/**/*.py", recursive=True)
+for idx, file_path in enumerate(glob("./api_modules/**/*.py", recursive=True)):
+    module_name = file_path[2:-3].replace("/", ".")
+    print(f"{idx} :: Loading module {module_name}...")
+    module = importlib.import_module(module_name)
+    MODULES.append(module)
+    MODULE_REGEX[module.LINK_REGEX] = module.parse_price
 
-for i in range(len(_temp_module_files)):
-    module_name = _temp_module_files[i][2::][:-3].replace("/", ".")
-    print(f"{i} :: Loading module {module_name}...")
-    MODULES.append(importlib.import_module(module_name))
-    MODULE_REGEX[MODULES[len(MODULES) - 1].LINK_REGEX] = MODULES[len(MODULES) - 1].parse_price
-
-del _temp_module_files
 print(f"Loaded {len(MODULES)} API module(s)...")
 
-_globals = {
-    "ENVRATE": ENVRATE,
-    "currencies": currencies
-}
+_globals = {"ENVRATE": ENVRATE, "currencies": currencies}
+
 
 class MyClient(discord.Client):
     async def on_ready(self):
-        print(f'Logged on as {self.user}!')
+        print(f"Logged on as {self.user}!")
 
     async def on_message(self, message):
-        
         if message.author == self.user:
             return
-        
+
         original_content = message.content
+        message.content = re.sub(
+            r"\<(a\:)?\:?\@?\w+(\:\d+)?\>", "", original_content
+        ).lower()
+        print(f"{message.author}: {message.content}", end="")
 
-        # This regex removes emotes from the message, so it doesnt pick up random emotes as currency / value.
-        message.content = re.sub(r'\<(a\:)?\:?\@?\w+(\:\d+)?\>', '', message.content).lower()
-
-        # Log out the message for better debugging
-        print(f"{message.author}: {message.content}", end='')
-
-        # Commands
         if message.content.startswith(ENVPREFIX):
-            print(' (command)', end='')
-            command = message.content.split()[0][1:]
-            args = message.content.split()[1:]
-            
-            # Checking in dictionary of commands and running the function specified
-            if command in COMMANDS:
-                return await COMMANDS[command]['run'](message, args, _globals)
-            
-            # Checking for aliases
-            alias_test = find_command_in_alias(command, COMMANDS)
-            if alias_test:
-                return await COMMANDS[alias_test]['run'](message, args, _globals)
+            print(" (command)", end="")
+            parts = message.content.split()
+            command_name = parts[0][1:]
+            args = parts[1:]
 
+            command_func = COMMANDS.get(command_name)
+            if not command_func:
+                command_name = find_command_in_alias(command_name, COMMANDS)
+                command_func = COMMANDS.get(command_name)
+
+            if command_func:
+                return await command_func["run"](message, args, _globals)
             return
 
-        # In-text conversion
+        print("")
+        currency_data_list = []
+        link_results = []
 
-        matches = re.finditer(CURRENCYREGEX, message.content, re.MULTILINE)
-        print('')
+        for match in re.finditer(CURRENCYREGEX, message.content, re.MULTILINE):
+            amount = float(match.group(1))
+            magnitude = len(match.group(2)) if match.group(2) else 0
+            currency_code = match.group(4)
 
-        currency_data = []
+            if magnitude > 0:
+                amount *= 1000**magnitude
 
-        for matchNum, match in enumerate(matches, start=1):
-            amount_unwrapped = float(match.group(1))
-            amount_k = len(match.group(2)) if match.group(2) else 0
-            currency = find_currency(match.group(4), currencies)
-
-
-            currencies_to_compare = ENVRATE.copy()
-            exchange_rates = []
-
-            if (amount_k > 0):
-                amount_unwrapped = amount_unwrapped * (1000 ** amount_k)
-
-            print(amount_unwrapped)
-
-            if (amount_unwrapped == 0):
+            if amount == 0:
                 continue
-            
-            CUSTOM_CURRENCY = False
 
-            if (not currency):
-                CUSTOM_CURRENCY = True
-                currency = find_currency(match.group(4), custom_currencies)
-                from_currency = currency['unit']['conversion_unit']
-                for defaultCurrency in currencies_to_compare:
-                    currency_obj = find_currency(defaultCurrency, currencies)
-                    if currency == currency_obj:
+            current_currency = find_currency(currency_code, currencies)
+            is_custom_currency = False
+
+            if not current_currency:
+                current_currency = find_currency(currency_code, custom_currencies)
+                is_custom_currency = bool(current_currency)
+
+            if not current_currency:
+                continue
+
+            exchange_rates_info = []
+            try:
+                for target_code in ENVRATE:
+                    target_currency = find_currency(target_code, currencies)
+                    if current_currency == target_currency:
                         continue
-                    exchange_rates.append('**{} {}**'.format(
-                        round(amount_unwrapped * currency['unit']['conversion_amount'] * get_cur_exchange_rate(from_currency, defaultCurrency), 3),
-                        currency_obj['cc'].upper()
-                    ))
 
-            if not CUSTOM_CURRENCY:
-                try:
-                    for defaultCurrency in currencies_to_compare:
-                        currency_obj = find_currency(defaultCurrency, currencies)
-                        if currency == currency_obj:
-                            continue
-                        exchange_rates.append('**{} {}**'.format(
-                            round(amount_unwrapped * get_cur_exchange_rate(currency['cc'], defaultCurrency), 3),
-                            currency_obj['cc'].upper()
-                        ))
+                    if is_custom_currency:
+                        from_unit = current_currency["unit"]["conversion_unit"]
+                        converted_amount = (
+                            amount
+                            * current_currency["unit"]["conversion_amount"]
+                            * get_cur_exchange_rate(from_unit, target_code)
+                        )
+                    else:
+                        converted_amount = amount * get_cur_exchange_rate(
+                            current_currency["cc"], target_code
+                        )
 
-                except:
-                    continue
-            
-            if (not exchange_rates):
+                    exchange_rates_info.append(
+                        f"**{round(converted_amount, 3)} {target_currency['cc'].upper()}**"
+                    )
+            except Exception:
+                continue
+
+            if exchange_rates_info:
+                currency_data_list.append(
+                    f"{amount} **{current_currency['cc'].upper()}** is "
+                    f"{', '.join(exchange_rates_info)}"
+                )
+            else:
                 await shit_broke(message)
                 return
 
-            currency_data.append('{} **{}** is {}'.format(
-                amount_unwrapped,
-                currency['cc'].upper(),
-                ', '.join(exchange_rates)
-            ))
-
-        ## Getting links & parsing
-        # Doing it after because it requires more time to process.
-
-        rg = list(MODULE_REGEX.keys())
-
-        LINK_RESULTS = []
-        match = None
-        for i in range(len(rg)):
-            rt = re.finditer(rg[i], message.content)
-            for matchNum, match in enumerate(rt, start=1):
+        for pattern, parser in MODULE_REGEX.items():
+            for match in re.finditer(pattern, message.content):
                 try:
-                    LINK_RESULTS.append(MODULE_REGEX[rg[i]](match[0]))
-                except:
+                    link_results.append(parser(match[0]))
+                except Exception:
                     pass
 
-        if (len(currency_data) < 1 and len(LINK_RESULTS) < 1):
+        if not currency_data_list and not link_results:
             return
-        
-        response_text = ""
 
-        if len(currency_data) > 0:
-            response_text += "### <a:DinkDonk:956632861899886702> {} currency mentions found.\n".format(len(currency_data))
+        response_parts = []
 
-            for k, v in enumerate(currency_data):
-                response_text += '{}. {}\n'.format(k+1, v)
+        if currency_data_list:
+            response_parts.append(
+                f"### <a:DinkDonk:956632861899886702> {len(currency_data_list)} "
+                "currency mentions found."
+            )
+            for idx, line in enumerate(currency_data_list, 1):
+                response_parts.append(f"{idx}. {line}")
 
-        if (len(LINK_RESULTS) > 0):
-            response_text += "\n### <a:DinkDonk:956632861899886702> {} links found.\n".format(len(LINK_RESULTS))
-            i = 1
-
-            for i in range(len(LINK_RESULTS)):
-                curr_info = find_currency(LINK_RESULTS[i]['currency'], currencies)
+        if link_results:
+            response_parts.append(
+                f"\n### <a:DinkDonk:956632861899886702> {len(link_results)} links found."
+            )
+            for idx, result in enumerate(link_results, 1):
+                curr_info = find_currency(result["currency"], currencies)
+                base_price = result["price"]
                 exchange_info = []
-                defPrice = LINK_RESULTS[i]['price']
-                currencies_to_compare = ENVRATE.copy()
-                response_text += f'{i}. [{LINK_RESULTS[i]["name"]}](<{LINK_RESULTS[i]["link"]}>) is **{defPrice} {curr_info["cc"].upper()}** or '
 
-                for defaultCurrency in currencies_to_compare:
-                    currency_obj = find_currency(defaultCurrency, currencies)
-                    if curr_info == currency_obj:
+                for target_code in ENVRATE:
+                    target_currency = find_currency(target_code, currencies)
+                    if curr_info == target_currency:
                         continue
-                    exchange_info.append('**{} {}**'.format(
-                        round(defPrice * get_cur_exchange_rate(curr_info['cc'], defaultCurrency), 3),
-                        currency_obj['cc'].upper()
-                    ))
-                response_text += f"{', '.join(exchange_info)}\n"
-                i += 1
+                    converted = round(
+                        base_price
+                        * get_cur_exchange_rate(curr_info["cc"], target_code),
+                        3,
+                    )
+                    exchange_info.append(
+                        f"**{converted} {target_currency['cc'].upper()}**"
+                    )
 
-        n = 1900
-        responses = [response_text[i:i+n] for i in range(0, len(response_text), n)]
+                response_parts.append(
+                    f"{idx}. [{result['name']}]({result['link']}) is "
+                    f"**{base_price} {curr_info['cc'].upper()}** or "
+                    f"{', '.join(exchange_info)}"
+                )
 
-        for response in responses:
-            await message.reply(response)
+        response_text = "\n".join(response_parts)
+        for chunk in [response_text[i : i + 1900] for i in range(0, len(response_text), 1900)]:
+            await message.reply(chunk)
 
-            
+
 intents = discord.Intents.default()
 intents.message_content = True
 
