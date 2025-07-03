@@ -34,6 +34,8 @@ $ python3 bot.py
 ## Features
 
 - [x] Automatic in-conversation currency conversion;
+- [x] Automatic in-conversation cryptocurrency conversion;
+- [x] Stock prices command;
 - [x] Command for manual conversion (`$convert 100 USD JPY`);
 - [x] Safe math functions;
 - [ ] Automatic services price parsing and conversion.
