@@ -8,6 +8,7 @@ from utility.convert import get_cur_exchange_rate
 from utility.text import find_currency, find_command_in_alias
 from utility.misc import shit_broke
 from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
+from utility.crypto import get_crypto_rate
 
 from commands.convert import convert as command_convert
 from commands.math import math as command_math
@@ -89,13 +90,20 @@ class MyClient(discord.Client):
 
             current_currency = find_currency(currency_code, currencies)
             is_custom_currency = False
+            is_crypto_currency = False
 
             if not current_currency:
                 current_currency = find_currency(currency_code, custom_currencies)
                 is_custom_currency = bool(current_currency)
 
             if not current_currency:
+                current_currency = get_crypto_rate(currency_code)
+                is_crypto_currency = bool(current_currency)
+
+            if not current_currency:
                 continue
+
+            print(current_currency)
 
             exchange_rates_info = []
             try:
@@ -111,6 +119,8 @@ class MyClient(discord.Client):
                             * current_currency["unit"]["conversion_amount"]
                             * get_cur_exchange_rate(from_unit, target_code)
                         )
+                    elif is_crypto_currency:
+                        converted_amount = float(amount) * current_currency['price'] * get_cur_exchange_rate('USD', target_code)
                     else:
                         converted_amount = amount * get_cur_exchange_rate(
                             current_currency["cc"], target_code
@@ -119,9 +129,10 @@ class MyClient(discord.Client):
                     exchange_rates_info.append(
                         f"**{round(converted_amount, 3)} {target_currency['cc'].upper()}**"
                     )
-            except Exception:
+            except Exception as e:
+                raise e
                 continue
-
+            print(exchange_rates_info)
             if exchange_rates_info:
                 currency_data_list.append(
                     f"{amount} **{current_currency['cc'].upper()}** is "

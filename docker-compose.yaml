@@ -8,3 +8,4 @@ services:
     - DISCORD_TOKEN=yourdiscordtokenhere
     - DEFAULT_CURRENCY=SEK,RUB,JPY
     - BOT_PREFIX=$
+  
