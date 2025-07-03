@@ -8,6 +8,6 @@ def get_crypto_rate(ticker, curr='usd'):
     return {
         "name": _['coins'][0]['name'],
         "cc": _['coins'][0]['symbol'],
-        "price": float(re.sub(r'\D', '', _['coins'][0]['data']['price'])),
+        "price": float(re.sub(r'[^\d.]', '', _['coins'][0]['data']['price'])),
         '24h_change': float(_['coins'][0]['data']['price_change_percentage_24h']['usd'])
     }
