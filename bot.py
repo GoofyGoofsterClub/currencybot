@@ -97,8 +97,10 @@ class MyClient(discord.Client):
                 is_custom_currency = bool(current_currency)
 
             if not current_currency:
-                current_currency = get_crypto_rate(currency_code)
-                is_crypto_currency = bool(current_currency)
+                if currency_code.startswith("$"):
+                    currency_code = currency_code[1:]
+                    current_currency = get_crypto_rate(currency_code)
+                    is_crypto_currency = bool(current_currency)
 
             if not current_currency:
                 continue
