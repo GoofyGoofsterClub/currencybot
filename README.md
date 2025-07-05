@@ -7,7 +7,8 @@ Bot for automatic conversion of currencies in Discord conversations.
 ## Dependencies
 
 1. Python 3.10+
-2. Discord Bot
+2. MongoDB 8.0.1+
+3. Discord Bot
 
 ## Installation
 
@@ -38,6 +39,7 @@ $ python3 bot.py
 - [x] Stock prices command;
 - [x] Command for manual conversion (`$convert 100 USD JPY`);
 - [x] Safe math functions;
+- [x] Set reminders;
 - [ ] Automatic services price parsing and conversion.
     - [x] Amazon (GLOBAL);
     - [x] Blocket.se (Sweden);
