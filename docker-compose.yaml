@@ -2,10 +2,29 @@ version: '3.4'
 services:
   currency-bot:
     image: nekopavel/discord-currency-bot:latest
-    container_name: discord-currency
+    # build: .
+    container_name: discord-currencys
     restart: always
+    depends_on:
+      - mongo
     environment:
     - DISCORD_TOKEN=yourdiscordtokenhere
     - DEFAULT_CURRENCY=SEK,RUB,JPY
+    - DISCORD_TOKEN=
     - BOT_PREFIX=$
-  
+    - MONGO_HOST=mongo
+    - MONGO_PORT=27017
+    - MONGO_DB=currencybot
+    - MONGO_USER=root
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      - MONGO_HOST=127.0.0.1
+      - MONGO_PORT=27017
+      - MONGO_INITDB_DATABASE=currencybot
+    volumes:
+      - db:/data/db
+
+volumes:
+  db:

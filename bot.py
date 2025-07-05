@@ -1,7 +1,14 @@
+import asyncio
 import discord
 import json
 import re
+import time
 import importlib
+import os
+import pymongo
+
+from datetime import datetime
+from discord.ext import tasks
 from glob import glob
 
 from utility.convert import get_cur_exchange_rate
@@ -14,6 +21,7 @@ from commands.convert import convert as command_convert
 from commands.math import math as command_math
 from commands.date import date as command_date
 from commands.stock import stock as command_stock
+from commands.remind import remind as command_remind
 
 
 COMMANDS = {
@@ -21,7 +29,11 @@ COMMANDS = {
     "math": {"run": command_math, "alias": ["m"]},
     "date": {"run": command_date, "alias": ["d"]},
     "stock": {"run": command_stock, "alias": ["st"]},
+    "remind": {"run": command_remind, "alias": ["r"]},
 }
+
+for _, command in enumerate(COMMANDS):
+    print(f"{_} :: Registering command {command}")
 
 with open("currencies.json") as f:
     currencies = json.load(f)
@@ -41,12 +53,38 @@ for idx, file_path in enumerate(glob("./api_modules/**/*.py", recursive=True)):
 
 print(f"Loaded {len(MODULES)} API module(s)...")
 
-_globals = {"ENVRATE": ENVRATE, "currencies": currencies}
+MONGO_URI = (
+    f"mongodb://"
+    f"{os.environ['MONGO_HOST']}:{os.environ['MONGO_PORT']}/"
+    f"?authSource={os.environ['MONGO_DB']}"
+)
 
+print(f"Connecting mongodb to {MONGO_URI}")
 
+dbclient = pymongo.MongoClient(MONGO_URI)
+currdb = dbclient['curr']
+_globals = {"ENVRATE": ENVRATE, "currencies": currencies, 'currdb': currdb}
+
+def get_due_reminders():
+    now = int(time.time()) 
+    return list(currdb['reminders'].find({'timestamp': {'$lte': now}}))
+
+def remove_reminder_by_id(reminder_id):
+    return currdb['reminders'].delete_one({'_id': reminder_id})
+
+@tasks.loop(seconds=1.0)
+async def reminder_check():
+    reminders = await asyncio.to_thread(get_due_reminders)
+    for reminder in reminders:
+        await asyncio.to_thread(remove_reminder_by_id, reminder['_id'])
+        # use bot and channel id from reminder to send a reminder
+        channel = client.get_channel(reminder['channel_id'])
+        await channel.send(f"<@{reminder['remindee_id']}> <a:dinkDonk:989155125673214032> `{reminder['reminder_text']}`")
 class MyClient(discord.Client):
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
+        if not reminder_check.is_running():
+            reminder_check.start()
 
     async def on_message(self, message):
         if message.author == self.user:
