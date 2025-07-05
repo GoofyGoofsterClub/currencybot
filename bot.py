@@ -94,7 +94,7 @@ class MyClient(discord.Client):
 
         original_content = message.content
         message.content = re.sub(
-            r"\<(a\:)?\:?\@?\w+(\:\d+)?\>", "", original_content
+            r"\<a?:\w+:\d+\>", "", original_content
         ).lower()
         print(f"{message.author}: {message.content}", end="")
 
