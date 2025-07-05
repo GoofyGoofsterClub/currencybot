@@ -1,7 +1,8 @@
 import asyncio
+from validators.timezone import is_valid_timezone
 
 SUPPORTED_VARIABLES={
-    "timezone": str,
+    "timezone": is_valid_timezone,
     #"currency": str
 }
 
@@ -40,7 +41,7 @@ async def _set(message, args, _globals):
                 except Exception as e:
                     await message.reply(f"An error occurred while processing this request. ({e})")
             else:
-                await message.reply(f"Invalid value for `{var}`. Supported values: {', '.join([str(t) for t in SUPPORTED_VARIABLES[var].__args__])}")
+                await message.reply(f"Invalid value for `{var}`.")
         else:
             await message.reply(f"Invalid variable. Supported variables: {', '.join(SUPPORTED_VARIABLES.keys())}")
     else:
