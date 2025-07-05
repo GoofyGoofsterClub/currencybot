@@ -2,6 +2,7 @@ import re
 import asyncio
 from datetime import datetime
 import dateparser
+from zoneinfo import ZoneInfo
 
 async def remind(message, args, _globals):
 
@@ -50,10 +51,10 @@ async def remind(message, args, _globals):
         reminder_text = "Here's your reminder!"
 
     
-    timeMatch = re.search(r"<t:(\d+):\w?>",time_string)
+    timeMatch = re.search(r"<t:(\d+)(?::[[:alpha:]]?)?>",time_string)
 
     if timeMatch != None:
-        reminder_datetime = datetime.fromtimestamp(int(timeMatch.group(1)),tz="Etc/UTC")
+        reminder_datetime = datetime.fromtimestamp(int(timeMatch.group(1)),tz=ZoneInfo("Etc/UTC"))
 
     else:
         settings = {
