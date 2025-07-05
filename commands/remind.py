@@ -50,7 +50,7 @@ async def remind(message, args, _globals):
         reminder_text = "Here's your reminder!"
 
     
-    timeMatch = re.search(r"<t:(\d+):R>",time_string)
+    timeMatch = re.search(r"<t:(\d+):\w?>",time_string)
 
     if timeMatch != None:
         reminder_datetime = datetime.fromtimestamp(int(timeMatch.group(1)),tz="Etc/UTC")
