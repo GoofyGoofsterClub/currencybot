@@ -22,6 +22,7 @@ from commands.math import math as command_math
 from commands.date import date as command_date
 from commands.stock import stock as command_stock
 from commands.remind import remind as command_remind
+from commands.set import _set as command_set
 
 
 COMMANDS = {
@@ -30,6 +31,7 @@ COMMANDS = {
     "date": {"run": command_date, "alias": ["d"]},
     "stock": {"run": command_stock, "alias": ["st"]},
     "remind": {"run": command_remind, "alias": ["r"]},
+    "set": {"run": command_set, "alias": []},
 }
 
 for _, command in enumerate(COMMANDS):

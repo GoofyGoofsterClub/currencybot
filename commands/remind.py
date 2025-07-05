@@ -54,6 +54,11 @@ async def remind(message, args, _globals):
         'RETURN_AS_TIMEZONE_AWARE': True,
         'TIMEZONE': 'Europe/Stockholm'
     }
+
+    timezone = await asyncio.to_thread(_globals['currdb']['user_preferences'].find_one, {"user_id": message.author.id}, {"timezone": 1})
+    if timezone:
+        settings['TIMEZONE'] = timezone['timezone']
+
     reminder_datetime = dateparser.parse(time_string, settings=settings)
 
     if reminder_datetime is None:
