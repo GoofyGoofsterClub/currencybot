@@ -49,17 +49,24 @@ async def remind(message, args, _globals):
     if not reminder_text:
         reminder_text = "Here's your reminder!"
 
-    settings = {
-        'PREFER_DATES_FROM': 'future',
-        'RETURN_AS_TIMEZONE_AWARE': True,
-        'TIMEZONE': 'Europe/Stockholm'
-    }
+    
+    timeMatch = re.search(r"<t:(\d+):R>",time_string)
 
-    timezone = await asyncio.to_thread(_globals['currdb']['user_preferences'].find_one, {"user_id": message.author.id}, {"timezone": 1})
-    if timezone:
-        settings['TIMEZONE'] = timezone['timezone']
+    if timeMatch != None:
+        reminder_datetime = datetime.fromtimestamp(int(timeMatch.group(1)),tz="Etc/UTC")
 
-    reminder_datetime = dateparser.parse(time_string, settings=settings)
+    else:
+        settings = {
+            'PREFER_DATES_FROM': 'future',
+            'RETURN_AS_TIMEZONE_AWARE': True,
+            'TIMEZONE': 'Europe/Stockholm'
+        }
+
+        timezone = await asyncio.to_thread(_globals['currdb']['user_preferences'].find_one, {"user_id": message.author.id}, {"timezone": 1})
+        if timezone:
+            settings['TIMEZONE'] = timezone['timezone']
+
+        reminder_datetime = dateparser.parse(time_string, settings=settings)
 
     if reminder_datetime is None:
         await message.reply(f"Error: Could not understand time '{time_string}'")
