@@ -16,7 +16,8 @@ def domain_to_color(domain):
     return discord.Color.from_rgb(r % 256, g % 256, b % 256)
 
 async def _whois(message, args, _globals):
-    await whoisit.bootstrap_async(overrides=True)
+    if not whoisit.is_bootstrapped():
+        await whoisit.bootstrap_async(overrides=True)
     if not args:
         await message.reply(f"Usage: $whois <domain>")
         return
