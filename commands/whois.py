@@ -36,7 +36,7 @@ async def _whois(message, args, _globals):
 
     try:
 
-        embed.set_thumbnail(url=f"https://screenshotlayer.com/php_helper_scripts/scl_api.php?secret_key=005c97dec862d8c10fc9157b24895279&url=https://{domain}")
+        embed.set_thumbnail(url=f"https://image.thum.io/get/maxAge/12/width/700/https://{domain}")
         
         # Dates
 
