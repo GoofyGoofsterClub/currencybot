@@ -6,3 +6,4 @@ dateparser
 beautifulsoup4
 pymongo
 aiohttp
+whoisit
