@@ -1,7 +1,6 @@
 import discord
 import whoisit
 import asyncio
-import os
 from datetime import datetime
 
 whois_lock = asyncio.Lock()
@@ -33,11 +32,7 @@ async def _whois(message, args, _globals):
         color=domain_to_color(domain)
     )
 
-    try:
-        rdap = await whoisit.domain_async(domain)
-    except whoisit.errors.UnsupportedError as e:
-        await message.reply(f"Error: Domain is not supported. ({e}) Most likely due to TDL not having known RDAP.")
-        return
+    rdap = await whoisit.domain_async(domain)
 
     try:
 
@@ -45,9 +40,9 @@ async def _whois(message, args, _globals):
         
         # Dates
 
-        created = rdap.creation_date.strftime('%Y-%m-%d %H:%M:%S UTC')
-        updated = rdap.last_updated.strftime('%Y-%m-%d %H:%M:%S UTC')
-        expires = rdap.expiration_date.strftime('%Y-%m-%d %H:%M:%S UTC')
+        created = rdap['registration_date'].strftime('%Y-%m-%d %H:%M:%S UTC')
+        updated = rdap['last_changed_date'].strftime('%Y-%m-%d %H:%M:%S UTC')
+        expires = rdap['expiration_date'].strftime('%Y-%m-%d %H:%M:%S UTC')
 
         embed.add_field(
             name="Created",
@@ -67,19 +62,10 @@ async def _whois(message, args, _globals):
             inline=True
         )
 
-        # Nameservers
-
-        nameservers = "\n".join(rdap.nameservers)
-        embed.add_field(
-            name="Nameservers",
-            value=nameservers,
-            inline=False
-        )
-
         # Entities info
 
-        registrar_name = rdap.registrar.name
-        registrar_email = rdap.registrar.email
+        registrar_name = rdap['entities']['registrar'][0]['name']
+        registrar_email = rdap['entities']['registrar'][0]['email']
 
         embed.add_field(
             name="Registrar",
@@ -89,8 +75,8 @@ async def _whois(message, args, _globals):
 
         # Registrant
 
-        registrant_name = rdap.registrant.name
-        registrant_email = rdap.registrant.email
+        registrant_name = rdap['entities']['registrant'][0]['name']
+        registrant_email = rdap['entities']['registrant'][0]['email']
 
         embed.add_field(
             name="Registrant",
@@ -98,8 +84,16 @@ async def _whois(message, args, _globals):
             inline=True
         )
 
+        # Nameservers
+
+        nameservers = "\n".join(rdap['nameservers'])
+        embed.add_field(
+            name="Nameservers",
+            value=nameservers,
+            inline=False
+        )
+
         await message.reply(embed=embed)
     except Exception as e:
         raise e
         await message.reply(f"Error while processing whois query: {e}")
-
