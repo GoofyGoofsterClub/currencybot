@@ -80,17 +80,38 @@ def remove_reminder_by_id(reminder_id):
 
 @tasks.loop(seconds=1.0)
 async def reminder_check():
-    reminders = await asyncio.to_thread(get_due_reminders)
-    for reminder in reminders:
-        await asyncio.to_thread(remove_reminder_by_id, reminder['_id'])
-        # use bot and channel id from reminder to send a reminder
-        channel = client.get_channel(reminder['channel_id'])
-        await channel.send(f"<@{reminder['remindee_id']}> <a:dinkDonk:989155125673214032> `{reminder['reminder_text']}`")
+    try:
+        reminders = await asyncio.to_thread(get_due_reminders)
+        for reminder in reminders:
+            channel = client.get_channel(reminder['channel_id'])
+            await channel.send(f"<@{reminder['remindee_id']}> <a:dinkDonk:989155125673214032> `{reminder['reminder_text']}`")
+            await asyncio.to_thread(remove_reminder_by_id, reminder['_id'])
+    except Exception as e:
+        print(e)
+
+@reminder_check.before_loop
+async def before_reminder_check():
+    await client.wait_until_ready()
+
+@tasks.loop(seconds=60.0)
+async def watchdog():
+    if not reminder_check.is_running():
+        reminder_check.start()
+
 class MyClient(discord.Client):
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
         if not reminder_check.is_running():
             reminder_check.start()
+        if not watchdog.is_running():
+            watchdog.start()
+    
+    async def on_resumed(self):
+        print(f"Resumed connection to {self.user}")
+        if not reminder_check.is_running():
+            reminder_check.start()
+        if not watchdog.is_running():
+            watchdog.start()
 
     async def on_message(self, message):
         if message.author == self.user:
@@ -239,7 +260,7 @@ class MyClient(discord.Client):
         response_text = "\n".join(response_parts)
         for chunk in [response_text[i : i + 1900] for i in range(0, len(response_text), 1900)]:
             await message.reply(chunk)
-    
+
     async def on_reaction_add(self, reaction: discord.Reaction, user):
         if not user.bot and reaction.message.author == self.user:
             if reaction.emoji == "❌":
