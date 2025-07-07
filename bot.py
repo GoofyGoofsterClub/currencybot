@@ -22,6 +22,8 @@ from commands.math import math as command_math
 from commands.date import date as command_date
 from commands.stock import stock as command_stock
 from commands.remind import remind as command_remind
+from commands.reminders import reminders as command_reminders
+from commands.unremind import unremind as command_unremind
 from commands.set import _set as command_set
 
 
@@ -31,6 +33,8 @@ COMMANDS = {
     "date": {"run": command_date, "alias": ["d"]},
     "stock": {"run": command_stock, "alias": ["st"]},
     "remind": {"run": command_remind, "alias": ["r"]},
+    "reminders": {"run": command_reminders, "alias": ["rs"]},
+    "unremind": {"run": command_unremind, "alias": ["ur"]},
     "set": {"run": command_set, "alias": []},
 }
 
@@ -235,7 +239,16 @@ class MyClient(discord.Client):
         response_text = "\n".join(response_parts)
         for chunk in [response_text[i : i + 1900] for i in range(0, len(response_text), 1900)]:
             await message.reply(chunk)
-
+    
+    async def on_reaction_add(self, reaction: discord.Reaction, user):
+        if not user.bot and reaction.message.author == self.user:
+            if reaction.emoji == "❌":
+                reminder_db = await asyncio.to_thread(currdb["reminders"].find_one, {"message_id": reaction.message.id})
+                if reminder_db:
+                    if user.id == reminder_db["remindee_id"] or user.id == reminder_db["creator_id"]:
+                        await reaction.message.delete()
+                        await asyncio.to_thread(currdb["reminders"].delete_one, {"message_id": reaction.message.id})
+                        await reaction.message.channel.send(f"<@{user.id}>, reminder for <@{reminder_db['remindee_id']}> has been deleted. \n\n-# Reminder ID: `{reminder_db['reminder_id']}`")
 
 intents = discord.Intents.default()
 intents.message_content = True
