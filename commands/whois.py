@@ -32,7 +32,11 @@ async def _whois(message, args, _globals):
         color=domain_to_color(domain)
     )
 
-    rdap = await whoisit.domain_async(domain)
+    try:
+        rdap = await whoisit.domain_async(domain)
+    except:
+        await message.reply(f"Domain unsupported or not found.")
+        return
 
     try:
 
