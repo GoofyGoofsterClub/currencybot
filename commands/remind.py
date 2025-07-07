@@ -1,7 +1,9 @@
+import random
+import string
 import re
 import asyncio
-from datetime import datetime
 import dateparser
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 async def remind(message, args, _globals):
@@ -80,23 +82,38 @@ async def remind(message, args, _globals):
 
     timestamp = int(reminder_datetime.timestamp())
 
+    reminder_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=9))
+
     reminder_data = {
+        "reminder_id": reminder_id,
+        "creator_id": message.author.id,
         "remindee_id": remindee_id,
         "reminder_text": reminder_text,
         "timestamp": timestamp,
-        "channel_id": message.channel.id
+        "channel_id": message.channel.id,
+        "message_id": None
     }
 
-    confirmation_text = (
-        f"Reminder set for <@{remindee_id}> about \"{reminder_text}\" "
-        f"at <t:{timestamp}:F>."
-    )
     
     try:
-        await asyncio.to_thread(_globals['currdb']['reminders'].insert_one, reminder_data)
+        reminder = await asyncio.to_thread(_globals['currdb']['reminders'].insert_one, reminder_data)
     except Exception as e:
         await message.reply(f"An error occurred while processing this request. ({e})")
         return
+
+    confirmation_text = (
+        f"Reminder set for <@{remindee_id}> about \"{reminder_text}\" "
+        f"at <t:{timestamp}:F>.\n\n"
+        f"-# Reminder ID: `{reminder_id}`"
+    )
     
-    await message.reply(confirmation_text)
+    msg = await message.reply(confirmation_text)
+
+    try:
+        await asyncio.to_thread(_globals['currdb']['reminders'].update_one, {"reminder_id": reminder_id}, {"$set": {"message_id": msg.id}})
+        await msg.add_reaction("❌")
+    except Exception as e:
+        await message.reply(f"An error occurred while processing this request. ({e})")
+
+
     return reminder_data
