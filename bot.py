@@ -25,6 +25,7 @@ from commands.remind import remind as command_remind
 from commands.reminders import reminders as command_reminders
 from commands.unremind import unremind as command_unremind
 from commands.set import _set as command_set
+from commands.whois import _whois as command_whois
 
 
 COMMANDS = {
@@ -36,6 +37,7 @@ COMMANDS = {
     "reminders": {"run": command_reminders, "alias": ["rs"]},
     "unremind": {"run": command_unremind, "alias": ["ur"]},
     "set": {"run": command_set, "alias": []},
+    "whois": {"run": command_whois, "alias": ["rdap"]},
 }
 
 for _, command in enumerate(COMMANDS):

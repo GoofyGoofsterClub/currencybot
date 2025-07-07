@@ -5,3 +5,5 @@ numexpr==2.10.2
 dateparser
 beautifulsoup4
 pymongo
+aiohttp
+whoisit
