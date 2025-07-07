@@ -22,6 +22,7 @@ from commands.math import math as command_math
 from commands.date import date as command_date
 from commands.stock import stock as command_stock
 from commands.remind import remind as command_remind
+from commands.reminders import reminders as command_reminders
 from commands.unremind import unremind as command_unremind
 from commands.set import _set as command_set
 
@@ -32,6 +33,7 @@ COMMANDS = {
     "date": {"run": command_date, "alias": ["d"]},
     "stock": {"run": command_stock, "alias": ["st"]},
     "remind": {"run": command_remind, "alias": ["r"]},
+    "reminders": {"run": command_reminders, "alias": ["rs"]},
     "unremind": {"run": command_unremind, "alias": ["ur"]},
     "set": {"run": command_set, "alias": []},
 }
