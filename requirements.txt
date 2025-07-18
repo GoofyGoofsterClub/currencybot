@@ -7,5 +7,5 @@ beautifulsoup4
 pymongo
 aiohttp
 whoisit
-investpy
+git+https://github.com/LMNYX/investpy.git@master
 pynvesting
