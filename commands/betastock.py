@@ -1,8 +1,18 @@
 import pynvesting
 from datetime import datetime, timedelta
 
+def parse_args(args):
+    symbol = args[0]
+    params = {}
+    for arg in args[1:]:
+        if arg.startswith('-') and '=' in arg:
+            key, value = arg.split('=', 1)
+            params[key.lstrip('-')] = value
+    return symbol, params
+
+
 async def stock(message, args, _globals):
-    arg_stock = args[0]
+    arg_stock, params = parse_args(args)
 
     end_date = datetime.today()
     start_date = end_date - timedelta(days=30)
@@ -24,7 +34,13 @@ async def stock(message, args, _globals):
     recent_price = rf['Close'].iloc[0]
     recent_date = int(records[-1]['Date'].timestamp())
 
-    date_change = 1
+    try:
+        date_change = int(params.get('d', 1))
+    except:
+        await message.reply("Error parsing parameters.")
+        return
+    
+    print(date_change)
 
     if date_change > 0:
         try:
