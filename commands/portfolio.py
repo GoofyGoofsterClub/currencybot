@@ -17,7 +17,7 @@ async def portfolio(message, args, _globals):
     if len(args) == 4:
         await _modify_portfolio(message, args, db, user_id)
     else:
-        await message.reply("Invalid command format. Use `portfolio [add|set|reduce|remove|set-initial] [stock|crypto] [SYMBOL] [value]` or just `portfolio`.")
+        await message.reply("Invalid command format. Use `portfolio <add|set|reduce|remove|set-initial> <stock|crypto> <symbol> <value>` or just `portfolio`.")
 
 async def _update_and_get_entry(entry, db):
     asset_type = entry['type']
@@ -47,7 +47,7 @@ async def _display_portfolio(message, db, summary_db, user_id):
     entries = await asyncio.to_thread(list, entries_cursor)
 
     if not entries:
-        await status_message.edit(content="Your portfolio is empty. Add an asset with `portfolio add [stock|crypto] [SYMBOL] [amount]`.")
+        await status_message.edit(content="Your portfolio is empty. Add an asset with `portfolio add <stock|crypto> <SYMBOL> <amount>`.")
         return
 
     update_tasks = [_update_and_get_entry(entry, db) for entry in entries]
