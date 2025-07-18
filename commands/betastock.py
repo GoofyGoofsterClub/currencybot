@@ -2,7 +2,7 @@ import pynvesting
 from datetime import datetime, timedelta
 
 
-async def get_stock(symbol, country):
+async def get_stock(symbol):
     search_result = pynvesting.search_quotes(text=symbol, products=['stocks'], n_results=1)
     return search_result
 
@@ -37,7 +37,7 @@ async def stock(message, args, _globals):
     end_date = datetime.today()
     start_date = end_date - timedelta(days=30)
 
-    search_result = await get_stock(arg_stock, 'US')
+    search_result = await get_stock(arg_stock)
     records = await get_stock_records(search_result.symbol, search_result.country, start_date, end_date)
 
     rf = await get_stock_recent_data(search_result.symbol, search_result.country)
