@@ -123,7 +123,7 @@ async def prisjakt(message, args, _globals):
 
         embed.set_thumbnail(url=product_image)
 
-        embed.set_footer(text="Kollade från Prisjakt",
+        embed.set_footer(text="Hämtat från Prisjakt",
                         icon_url="https://pricespy-75b8.kxcdn.com/g/rfe/logos/logo_v2_symbol.png")
 
         await message.reply(embed=embed)
