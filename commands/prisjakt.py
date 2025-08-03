@@ -95,7 +95,7 @@ async def prisjakt(message, args, _globals):
         except:
             product_image = "https://pricespy-75b8.kxcdn.com/product/standard/280/0.png"
         
-        product_prices = product_info['data']['product']['prices']['nodes'][:3]
+        product_prices = [x for x in product_info['data']['product']['prices']['nodes'] if x['stock']['status'] == "in_stock"][:3]
 
 
         embed = discord.Embed(title=product_name,
@@ -113,7 +113,7 @@ async def prisjakt(message, args, _globals):
             else:
                 price_str = f"{price['price']['exclShipping']} {price['store']['currency']} (excl. shipping)"
 
-            if price['externalUri'] is "" or price['externalUri'] is None:
+            if price['externalUri'] == "" or price['externalUri'] is None:
                 value = f"för {price['name']}\nSkick: `{price['condition']}`\n(länk saknas)"
             else:
                 value = f"för {price['name']}\n[Visit]({price['externalUri']})"
