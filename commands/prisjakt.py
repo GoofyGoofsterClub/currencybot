@@ -97,6 +97,9 @@ async def prisjakt(message, args, _globals):
         
         product_prices = [x for x in product_info['data']['product']['prices']['nodes'] if x['stock']['status'] == "in_stock"][:3]
 
+        if len(product_prices) == 0:
+            await message.reply("Hittade ingenting.")
+            return
 
         embed = discord.Embed(title=product_name,
                         url=f"https://www.prisjakt.nu/produkt.php?p={product_id}",
