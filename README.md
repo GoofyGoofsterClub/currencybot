@@ -45,7 +45,7 @@ $ python3 bot.py
     - [x] Blocket.se (Sweden);
     - [ ] Aliexpress (GLOBAL);
     - [ ] Steam (using their API, GLOBAL);
-    - [ ] prisjakt.nu (Sweden);
+    - [x] prisjakt.nu (Sweden);
     - [ ] Alibaba (GLOBAL);
     - [ ] Pricerunner (maybe, GLOBAL);
     - [ ] Avito (Russia);
