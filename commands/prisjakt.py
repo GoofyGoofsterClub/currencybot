@@ -1,7 +1,9 @@
 from utility.text import find_currency, unwrap_number
 from utility.misc import shit_broke
 from utility.convert import get_cur_exchange_rate
+from datetime import datetime
 import requests
+import discord
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0',
@@ -56,32 +58,75 @@ def fetch_product(product_id: int):
     return response.json()
 
 async def prisjakt(message, args, _globals):
-    if len(args) < 1:
-        await message.reply("You have to specify what you want to search for.")
-        return
-    
-    arg_str = " ".join(args)
+    try:
+        if len(args) < 1:
+            await message.reply("Du måste ange vad du vill söka efter.")
+            return
+        
+        arg_str = " ".join(args)
 
-    response = requests.post(f"https://www.prisjakt.nu/_internal/bff", json={
-        "query": "hash:e4ac9354c618e6f18f51509f6c1c8c30ad4888961f2f62fe3848c8977a70409d",
-        "variables": {
-            "query": arg_str
-        }
-    },
-    headers=headers)
-    if response.status_code != 200:
-        await message.reply("Couldn't fetch data.")
-        return
+        response = requests.post(f"https://www.prisjakt.nu/_internal/bff", json={
+            "query": "hash:e4ac9354c618e6f18f51509f6c1c8c30ad4888961f2f62fe3848c8977a70409d",
+            "variables": {
+                "query": arg_str
+            }
+        },
+        headers=headers)
+        if response.status_code != 200:
+            await message.reply("Hittade ingenting.")
+            return
 
 
-    data = response.json()
-    print(data)
-    if len(data['data']['searchSuggestions']) == 0:
-        await message.reply("Couldn't find anything.")
-        return
+        data = response.json()
+        if len(data['data']['searchSuggestions']) == 0:
+            await message.reply("Hittade ingenting.")
+            return
 
-    small_info = data['data']['searchSuggestions'][1]
+        small_info = [x for x in data['data']['searchSuggestions'] if x['__typename'] == 'SuggestedProduct']
+        best_match_product = small_info[0]
 
-    product_info = fetch_product(int(small_info['id']))
+        product_info = fetch_product(int(best_match_product['id']))
+        
+        product_id = product_info['data']['product']['id']
+        product_name = product_info['data']['product']['name']
+        product_description = product_info['data']['product']['metadata']['description']
+        try:
+            product_image = product_info['data']['product']['media']['first']
+        except:
+            product_image = "https://pricespy-75b8.kxcdn.com/product/standard/280/0.png"
+        
+        product_prices = product_info['data']['product']['prices']['nodes'][:3]
 
-    print(product_info)
+
+        embed = discord.Embed(title=product_name,
+                        url=f"https://www.prisjakt.nu/produkt.php?p={product_id}",
+                        description=product_description,
+                        timestamp=datetime.now())
+
+        embed.set_author(name="Prisjakt",
+                        url="https://www.prisjakt.nu/",
+                        icon_url="https://pricespy-75b8.kxcdn.com/g/rfe/logos/logo_v2_symbol.png")
+
+        for price in product_prices:
+            if price['price']['inclShipping'] != None:
+                price_str = f"{price['price']['inclShipping']} {price['store']['currency']} (incl. shipping)"
+            else:
+                price_str = f"{price['price']['exclShipping']} {price['store']['currency']} (excl. shipping)"
+
+            if price['externalUri'] is "" or price['externalUri'] is None:
+                value = f"för {price['name']}\nSkick: `{price['condition']}`\n(länk saknas)"
+            else:
+                value = f"för {price['name']}\n[Visit]({price['externalUri']})"
+            embed.add_field(name=f"{price['store']['name']} ・ **{price_str}**",
+                            value=value,
+                            inline=False)
+
+        embed.set_thumbnail(url=product_image)
+
+        embed.set_footer(text="Kollade från Prisjakt",
+                        icon_url="https://pricespy-75b8.kxcdn.com/g/rfe/logos/logo_v2_symbol.png")
+
+        await message.reply(embed=embed)
+
+    except Exception as e:
+        await message.reply(f"An error occurred while processing this request. ({e})")
