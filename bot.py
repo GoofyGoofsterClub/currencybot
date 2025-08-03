@@ -20,6 +20,7 @@ from utility.crypto import get_crypto_rate
 from commands.convert import convert as command_convert
 from commands.betastock import stock as command_beta_stock
 from commands.portfolio import portfolio as command_portfolio
+from commands.prisjakt import prisjakt as command_prisjakt
 from commands.math import math as command_math
 from commands.date import date as command_date
 from commands.remind import remind as command_remind
@@ -40,6 +41,7 @@ COMMANDS = {
     "unremind": {"run": command_unremind, "alias": ["ur"]},
     "set": {"run": command_set, "alias": []},
     "whois": {"run": command_whois, "alias": ["rdap"]},
+    "prisjakt": {"run": command_prisjakt, "alias": ["p", "nu"]},
 }
 
 for _, command in enumerate(COMMANDS):
