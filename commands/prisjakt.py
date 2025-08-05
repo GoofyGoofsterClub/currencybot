@@ -119,7 +119,7 @@ async def prisjakt(message, args, _globals):
             if price['externalUri'] == "" or price['externalUri'] is None:
                 value = f"för {price['name']}\nSkick: `{price['condition']}`\n(länk saknas)"
             else:
-                value = f"för {price['name']}\nSkick: `{price['condition']}\n[Visit]({price['externalUri']})"
+                value = f"för {price['name']}\nSkick: `{price['condition']}`\n[Visit]({price['externalUri']})"
             embed.add_field(name=f"{price['store']['name']} ・ **{price_str}**",
                             value=value,
                             inline=False)
