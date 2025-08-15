@@ -4,8 +4,9 @@ from datetime import datetime, timedelta
 from commands.betastock import get_stock, get_stock_records
 from utility.crypto import get_crypto_rate
 from utility.convert import get_cur_exchange_rate
+from utility.command import Command
 
-async def portfolio(message, args, _globals):
+async def _portfolio(message, args, _globals):
     db = _globals['currdb']['user_portfolios']
     summary_db = _globals['currdb']['portfolio_summary']
     user_id = message.author.id
@@ -250,3 +251,5 @@ async def _fetch_asset_data(asset_type, symbol):
             "currency": "USD"
         }
     return None
+
+portfolio = Command(["portfolio", "pf"], _portfolio)

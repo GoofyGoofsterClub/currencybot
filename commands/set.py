@@ -1,5 +1,6 @@
 import asyncio
 from validators.timezone import is_valid_timezone
+from utility.command import Command
 
 SUPPORTED_VARIABLES={
     "timezone": is_valid_timezone,
@@ -13,7 +14,7 @@ def validate_type(value, type):
     except:
         return False
 
-async def _set(message, args, _globals):
+async def __set(message, args, _globals):
     if len(args) == 1 and args[0].lower() == "list":
         await message.reply(", ".join(SUPPORTED_VARIABLES.keys()))
         return
@@ -46,3 +47,5 @@ async def _set(message, args, _globals):
             await message.reply(f"Invalid variable. Supported variables: {', '.join(SUPPORTED_VARIABLES.keys())}")
     else:
         await message.reply('Invalid arguments. Example: $set <variable> <value>')
+
+command = Command(["set"], __set)

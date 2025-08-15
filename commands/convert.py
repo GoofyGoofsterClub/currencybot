@@ -1,6 +1,7 @@
 from utility.text import find_currency, unwrap_number
 from utility.misc import shit_broke
 from utility.convert import get_cur_exchange_rate
+from utility.command import Command
 
 async def convert(message, args, _globals):
     if len(args) == 3:
@@ -24,3 +25,5 @@ async def convert(message, args, _globals):
         await message.reply(f'{amount} {currency["cc"].upper()} is ~{round(total_value, 3)} {to_currency["cc"].upper()}.')
     else:
         await message.reply('Invalid arguments')
+
+command = Command(["convert", "cc"], convert)

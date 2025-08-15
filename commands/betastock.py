@@ -1,6 +1,6 @@
 import pynvesting
 from datetime import datetime, timedelta
-
+from utility.command import Command
 
 async def get_stock(symbol):
     search_result = pynvesting.search_quotes(text=symbol, products=['stocks'], n_results=1)
@@ -71,3 +71,5 @@ async def stock(message, args, _globals):
 
     return
 
+
+command = Command(["stock", "st"], stock)

@@ -2,6 +2,7 @@ import discord
 import whoisit
 import asyncio
 from datetime import datetime
+from utility.command import Command
 
 whois_lock = asyncio.Lock()
 
@@ -101,3 +102,9 @@ async def _whois(message, args, _globals):
     except Exception as e:
         raise e
         await message.reply(f"Error while processing whois query: {e}")
+
+
+command = Command(
+    ["whois", "rdap"],
+    _whois
+)

@@ -2,6 +2,7 @@ from utility.text import find_currency, unwrap_number
 from utility.misc import shit_broke
 from utility.convert import get_cur_exchange_rate
 from datetime import datetime
+from utility.command import Command
 import requests
 import discord
 
@@ -57,7 +58,7 @@ def fetch_product(product_id: int):
     response = requests.post(url, headers=headers, json=payload)
     return response.json()
 
-async def prisjakt(message, args, _globals):
+async def _prisjakt(message, args, _globals):
     try:
         if len(args) < 1:
             await message.reply("Du måste ange vad du vill söka efter.")
@@ -133,3 +134,5 @@ async def prisjakt(message, args, _globals):
 
     except Exception as e:
         await message.reply(f"An error occurred while processing this request. ({e})")
+
+command = Command(["prisjakt", "nu"], _prisjakt)
