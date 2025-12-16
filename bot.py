@@ -86,7 +86,11 @@ async def reminder_check():
         reminders = await asyncio.to_thread(get_due_reminders)
         for reminder in reminders:
             channel = client.get_channel(reminder['channel_id'])
-            await channel.send(f"<@{reminder['remindee_id']}> <a:dinkDonk:989155125673214032> `{reminder['reminder_text']}`")
+            try:
+                message = await channel.fetch_message(reminder['message_id'])
+                await message.reply(f"<@{reminder['remindee_id']}> <a:dinkDonk:989155125673214032> `{reminder['reminder_text']}`")
+            except discord.NotFound:
+                await channel.send(f"<@{reminder['remindee_id']}> <a:dinkDonk:989155125673214032> `{reminder['reminder_text']}`")
             await asyncio.to_thread(remove_reminder_by_id, reminder['_id'])
     except Exception as e:
         print(e)

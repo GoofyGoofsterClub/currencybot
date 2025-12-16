@@ -92,7 +92,7 @@ async def _remind(message, args, _globals):
         "reminder_text": reminder_text,
         "timestamp": timestamp,
         "channel_id": message.channel.id,
-        "message_id": None
+        "message_id": message.id
     }
 
     
