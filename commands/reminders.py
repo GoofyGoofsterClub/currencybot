@@ -1,8 +1,9 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import asyncio
+from utility.command import Command
 
-async def reminders(message, args, _globals):
+async def _reminders(message, args, _globals):
     reminders = await asyncio.to_thread(_globals['currdb']['reminders'].find, {"remindee_id": message.author.id})
 
     if not reminders:
@@ -29,3 +30,4 @@ async def reminders(message, args, _globals):
         for idx, reminder in enumerate(split_list, 1):
             await message.reply(f"Reminders ({idx}/{len(split_list)}):\n{reminder}")
 
+command = Command(["reminders", "rs"], _reminders)

@@ -4,8 +4,10 @@ import json
 import re
 import time
 import importlib
+import pathlib
 import os
 import pymongo
+import inspect
 
 from datetime import datetime
 from discord.ext import tasks
@@ -16,36 +18,30 @@ from utility.text import find_currency, find_command_in_alias
 from utility.misc import shit_broke
 from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
 from utility.crypto import get_crypto_rate
-
-from commands.convert import convert as command_convert
-from commands.betastock import stock as command_beta_stock
-from commands.portfolio import portfolio as command_portfolio
-from commands.prisjakt import prisjakt as command_prisjakt
-from commands.math import math as command_math
-from commands.date import date as command_date
-from commands.remind import remind as command_remind
-from commands.reminders import reminders as command_reminders
-from commands.unremind import unremind as command_unremind
-from commands.set import _set as command_set
-from commands.whois import _whois as command_whois
+from utility.command import Command
 
 
 COMMANDS = {
-    "convert": {"run": command_convert, "alias": ["cc"]},
-    "math": {"run": command_math, "alias": ["m"]},
-    "date": {"run": command_date, "alias": ["d"]},
-    "stock": {"run": command_beta_stock, "alias": ["st"]},
-    "portfolio": {"run": command_portfolio, "alias": ["pf"]},
-    "remind": {"run": command_remind, "alias": ["r"]},
-    "reminders": {"run": command_reminders, "alias": ["rs"]},
-    "unremind": {"run": command_unremind, "alias": ["ur"]},
-    "set": {"run": command_set, "alias": []},
-    "whois": {"run": command_whois, "alias": ["rdap"]},
-    "prisjakt": {"run": command_prisjakt, "alias": ["p", "nu"]},
 }
 
-for _, command in enumerate(COMMANDS):
-    print(f"{_} :: Registering command {command}")
+commands_dir = pathlib.Path(__file__).parent / "commands"
+for file_path in commands_dir.glob("*.py"):
+    if file_path.name == "__init__.py":
+        continue
+
+    module_name = file_path.stem
+    print(f"Loading command {module_name}...")
+    mod = importlib.import_module(f"commands.{module_name}")
+
+    # Find any Command instance in the module automatically
+    for _, obj in inspect.getmembers(mod):
+        if isinstance(obj, Command):
+            COMMANDS[obj.commands[-1]] = {
+                "run": obj.func,
+                "alias": obj.commands[:-1]
+            }
+            break
+
 
 with open("currencies.json") as f:
     currencies = json.load(f)

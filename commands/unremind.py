@@ -1,6 +1,7 @@
 import asyncio
+from utility.command import Command
 
-async def unremind(message, args, _globals):
+async def _unremind(message, args, _globals):
     if not args:
         await message.reply(f"Usage: $unremind <reminder_id>")
         return
@@ -10,3 +11,5 @@ async def unremind(message, args, _globals):
         await message.reply(f"Deleted reminder with id `{args[0].upper()}`.")
     except:
         await message.reply(f"Couldn't find a reminder with id `{args[0].upper()}`.")
+
+command = Command(["unremind", "ur"], _unremind)

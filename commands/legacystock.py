@@ -1,5 +1,6 @@
 import requests
 from utility.ddg import get_vqd
+from utility.command import Command
 
 def get_stock_info(ticker):
     cookies = {

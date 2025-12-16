@@ -5,8 +5,9 @@ import asyncio
 import dateparser
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from utility.command import Command
 
-async def remind(message, args, _globals):
+async def _remind(message, args, _globals):
 
     if not args:
         await message.reply(f"Usage: $remind <who> <what> <when>")
@@ -117,3 +118,5 @@ async def remind(message, args, _globals):
 
 
     return reminder_data
+
+command = Command(["remind"], _remind)
