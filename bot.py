@@ -92,8 +92,8 @@ async def reminder_check():
             except discord.NotFound:
                 await channel.send(f"<@{reminder['remindee_id']}> <a:dinkDonk:989155125673214032> `{reminder['reminder_text']}`")
             await asyncio.to_thread(remove_reminder_by_id, reminder['_id'])
-    except Exception as e:
-        print(e)
+    except Exception:
+        pass
 
 @reminder_check.before_loop
 async def before_reminder_check():
