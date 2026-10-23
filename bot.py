@@ -19,6 +19,7 @@ from utility.misc import shit_broke
 from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
 from utility.crypto import get_crypto_rate
 from utility.command import Command
+from utility.flight_tracker import process_trackings
 
 
 COMMANDS = {
@@ -99,16 +100,31 @@ async def reminder_check():
 async def before_reminder_check():
     await client.wait_until_ready()
 
+@tasks.loop(seconds=120.0)
+async def flight_check():
+    try:
+        await process_trackings(client, currdb)
+    except Exception as e:
+        print(e)
+
+@flight_check.before_loop
+async def before_flight_check():
+    await client.wait_until_ready()
+
 @tasks.loop(seconds=60.0)
 async def watchdog():
     if not reminder_check.is_running():
         reminder_check.start()
+    if not flight_check.is_running():
+        flight_check.start()
 
 class MyClient(discord.Client):
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
         if not reminder_check.is_running():
             reminder_check.start()
+        if not flight_check.is_running():
+            flight_check.start()
         if not watchdog.is_running():
             watchdog.start()
     
@@ -116,6 +132,8 @@ class MyClient(discord.Client):
         print(f"Resumed connection to {self.user}")
         if not reminder_check.is_running():
             reminder_check.start()
+        if not flight_check.is_running():
+            flight_check.start()
         if not watchdog.is_running():
             watchdog.start()
 
