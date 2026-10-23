@@ -40,6 +40,7 @@ $ python3 bot.py
 - [x] Command for manual conversion (`$convert 100 USD JPY`);
 - [x] Safe math functions;
 - [x] Set reminders;
+- [x] Flight tracking via Flightradar24 (`$track SK1415 #channel`, `$untrack SK1415`);
 - [ ] Automatic services price parsing and conversion.
     - [x] Amazon (GLOBAL);
     - [x] Blocket.se (Sweden);
