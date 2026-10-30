@@ -7,5 +7,7 @@ beautifulsoup4
 pymongo
 aiohttp
 whoisit
+wasmtime
+quickjs
 git+https://github.com/LMNYX/investpy.git@master
 pynvesting

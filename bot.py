@@ -20,6 +20,7 @@ from utility.statics import CURRENCYREGEX, ENVRATE, ENVPREFIX, ENVTOKEN
 from utility.crypto import get_crypto_rate
 from utility.command import Command
 from utility.flight_tracker import process_trackings
+from utility.parcel_tracker import process_parcel_trackings
 
 
 COMMANDS = {
@@ -111,12 +112,25 @@ async def flight_check():
 async def before_flight_check():
     await client.wait_until_ready()
 
+@tasks.loop(seconds=120.0)
+async def parcel_check():
+    try:
+        await process_parcel_trackings(client, currdb)
+    except Exception as e:
+        print(e)
+
+@parcel_check.before_loop
+async def before_parcel_check():
+    await client.wait_until_ready()
+
 @tasks.loop(seconds=60.0)
 async def watchdog():
     if not reminder_check.is_running():
         reminder_check.start()
     if not flight_check.is_running():
         flight_check.start()
+    if not parcel_check.is_running():
+        parcel_check.start()
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -125,6 +139,8 @@ class MyClient(discord.Client):
             reminder_check.start()
         if not flight_check.is_running():
             flight_check.start()
+        if not parcel_check.is_running():
+            parcel_check.start()
         if not watchdog.is_running():
             watchdog.start()
     
@@ -134,12 +150,20 @@ class MyClient(discord.Client):
             reminder_check.start()
         if not flight_check.is_running():
             flight_check.start()
+        if not parcel_check.is_running():
+            parcel_check.start()
         if not watchdog.is_running():
             watchdog.start()
 
     async def on_message(self, message):
         if message.author == self.user:
             return
+
+        if message.content and not message.content.startswith(ENVPREFIX):
+            from commands.track import check_pending_captcha
+            if await check_pending_captcha(message):
+                print(" (parcel captcha answer)")
+                return
 
         original_content = message.content
         message.content = re.sub(
